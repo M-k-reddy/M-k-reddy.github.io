@@ -59,6 +59,8 @@ section{padding:96px 0}
 .nav-cta{display:flex;align-items:center;gap:8px}
 .nav-cta .signin{padding:10px 14px;font-weight:600;font-size:15px;color:var(--ink-2)}
 .nav-cta .signin:hover{color:var(--ink)}
+.nav-cta .signin.me{display:inline-flex;align-items:center;gap:8px}
+.nav-cta .signin.me img{width:28px;height:28px;border-radius:50%;object-fit:cover}
 .burger{display:none;width:44px;height:44px;border-radius:10px;align-items:center;justify-content:center}
 .burger span,.burger span::before,.burger span::after{display:block;width:20px;height:2px;background:var(--ink);border-radius:2px;position:relative;transition:transform .25s,background .25s}
 .burger span::before,.burger span::after{content:"";position:absolute;left:0}
@@ -299,7 +301,7 @@ kbd{font-family:var(--mono);font-size:13px;background:var(--ink);color:var(--cya
     <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span></span></button>
   </div>
   <div class="mobile-menu" id="mobile-menu">
-    <a href="#features">Features</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="account.html">Sign in</a>
+    <a href="#features">Features</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a class="m-signin" href="account.html">Sign in</a>
     <a class="btn btn-primary" href="https://github.com/M-k-reddy/AlgoSolveo" target="_blank" rel="noopener">Get Started Free</a>
   </div>
 </header>
@@ -690,6 +692,26 @@ kbd{font-family:var(--mono);font-size:13px;background:var(--ink);color:var(--cya
     entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
   }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
   els.forEach(function (e) { io.observe(e); });
+})();
+</script>
+<script>
+// Show the signed-in state in the header. Reads the session Supabase saved on account.html (same site), no extra library needed.
+(function () {
+  try {
+    var raw = localStorage.getItem("sb-qxlmqxslpwqbrisywzsp-auth-token");
+    if (!raw) return;
+    var s = JSON.parse(raw); s = s && (s.currentSession || s);
+    var u = s && s.user; if (!u || !s.refresh_token) return;
+    var m = u.user_metadata || {}, first = (m.full_name || "").split(" ")[0];
+    var a = document.querySelector(".nav-cta .signin");
+    if (a) {
+      a.classList.add("me"); a.textContent = "";
+      if (m.avatar_url) { var img = document.createElement("img"); img.src = m.avatar_url; img.alt = ""; img.referrerPolicy = "no-referrer"; a.appendChild(img); }
+      a.appendChild(document.createTextNode(first ? first + " · Dashboard" : "Dashboard"));
+    }
+    var mm = document.querySelector(".mobile-menu .m-signin");
+    if (mm) mm.textContent = "Dashboard";
+  } catch (e) {}
 })();
 </script>
 </body>
