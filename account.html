@@ -3,83 +3,168 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Your account · AlgoSolveo</title>
+<title>Your dashboard · AlgoSolveo</title>
 <meta name="robots" content="noindex" />
 <link rel="icon" type="image/png" href="algosolveo-icon128.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
 <style>
-:root{--purple:#8B5CF6;--purple-d:#6D28D9;--cyan:#22D3EE;--ink:#0F172A;--ink-2:#334155;--muted:#64748B;--soft:#F8FAFC;--border:#E2E8F0;--green:#16A34A;--red:#DC2626;
+:root{--purple:#8B5CF6;--purple-d:#6D28D9;--cyan:#22D3EE;--ink:#0F172A;--ink-2:#334155;--muted:#64748B;--soft:#F8FAFC;--border:#E2E8F0;--green:#16A34A;--amber:#D97706;--red:#DC2626;
 --font:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px rgba(15,23,42,.06)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);color:var(--ink);background:var(--soft);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
-button{font:inherit;cursor:pointer;border:0}
-header{background:#fff;border-bottom:1px solid var(--border)}
-.nav{max-width:1160px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5}
+.nav{max-width:1100px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.02em}
 .brand img{width:32px;height:32px}
-.back{font-weight:600;color:var(--ink-2);font-size:15px}
-main{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 20px}
-.card{background:#fff;border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);padding:40px;width:100%;max-width:440px;text-align:center}
-h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
-.sub{color:var(--muted);margin-bottom:28px}
-.gbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:13px 18px;border-radius:12px;border:1px solid var(--border);background:#fff;font-weight:700;font-size:16px;color:var(--ink);transition:.15s}
+.navr{display:flex;align-items:center;gap:18px;font-weight:600;font-size:15px;color:var(--ink-2)}
+.navr a:hover,.navr button:hover{color:var(--purple-d)}
+.me{display:flex;align-items:center;gap:8px}
+.me img{width:30px;height:30px;border-radius:50%;object-fit:cover;background:#EDE9FE}
+main{flex:1;width:100%;max-width:1100px;margin:0 auto;padding:32px 24px 64px}
+.hidden{display:none!important}
+.card{background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:24px}
+/* signed-out */
+.center{min-height:60vh;display:flex;align-items:center;justify-content:center}
+.signin{max-width:440px;width:100%;text-align:center;padding:40px}
+h1{font-size:28px;font-weight:800;letter-spacing:-.02em}
+.sub{color:var(--muted);margin:8px 0 28px}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:13px 18px;border-radius:12px;border:1px solid var(--border);background:#fff;font-weight:700;font-size:16px;transition:.15s}
 .gbtn:hover{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.12)}
 .gbtn svg{width:20px;height:20px}
-.btn{display:inline-flex;align-items:center;justify-content:center;width:100%;padding:13px 18px;border-radius:12px;font-weight:700;font-size:16px}
-.btn-primary{background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;box-shadow:0 8px 20px -6px rgba(109,40,217,.5)}
-.btn-ghost{background:none;color:var(--muted);margin-top:10px;font-weight:600;font-size:15px}
-.avatar{width:64px;height:64px;border-radius:50%;margin:0 auto 14px;background:#EDE9FE;object-fit:cover}
-.email{color:var(--muted);font-size:15px;margin-bottom:24px;word-break:break-all}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;text-align:left}
-.stat{background:var(--soft);border:1px solid var(--border);border-radius:14px;padding:14px 16px}
-.stat .k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.stat .v{font-size:22px;font-weight:800;margin-top:2px}
-.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:14px;font-weight:700;background:#EDE9FE;color:var(--purple-d)}
-.pill.pro{background:#DCFCE7;color:var(--green)}
 .note{font-size:14px;color:var(--muted);margin-top:16px}
-.err{color:var(--red);font-size:14px;margin-top:14px;min-height:20px}
-.hidden{display:none}
-.spin{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--purple);border-radius:50%;margin:20px auto;animation:s 1s linear infinite}
+/* dashboard */
+.hello{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.hello h1{font-size:30px}
+.hello p{color:var(--muted);margin-top:4px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:12px;font-weight:700;font-size:15px;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;box-shadow:0 8px 20px -6px rgba(109,40,217,.5)}
+.btn-primary:hover{filter:brightness(1.07)}
+.btn-line{border:1px solid var(--border);background:#fff;color:var(--ink)}
+.btn-line:hover{border-color:var(--purple)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat .k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-size:28px;font-weight:800;margin-top:6px;letter-spacing:-.02em}
+.stat .s{font-size:13px;color:var(--muted);margin-top:4px}
+.pill{display:inline-block;padding:3px 12px;border-radius:999px;font-size:15px;font-weight:700;background:#EDE9FE;color:var(--purple-d);vertical-align:middle}
+.pill.pro{background:#DCFCE7;color:var(--green)}
+.bar{height:8px;border-radius:99px;background:#EEF2F7;overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--purple),var(--cyan));width:0;transition:width .6s}
+.grid{display:grid;grid-template-columns:1.6fr 1fr;gap:24px;align-items:start}
+.side{display:flex;flex-direction:column;gap:24px}
+h2{font-size:18px;font-weight:800;letter-spacing:-.01em}
+.h2row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px}
+.filters{display:flex;gap:6px}
+.filters button{font-size:13px;font-weight:700;padding:5px 10px;border-radius:8px;color:var(--muted)}
+.filters button.on{background:#EDE9FE;color:var(--purple-d)}
+.pat{border-top:1px solid var(--border)}
+.pat:first-child{border-top:0}
+.pat summary{list-style:none;cursor:pointer;padding:12px 2px;display:grid;grid-template-columns:1fr 120px 56px;gap:14px;align-items:center}
+.pat summary::-webkit-details-marker{display:none}
+.pat .pn{font-weight:600;font-size:15px}
+.pat .pc{font-size:13px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.pat .bar{margin:0}
+.pat.done .pn::after{content:" ✓";color:var(--green)}
+.probs{padding:0 2px 12px;display:flex;flex-direction:column;gap:2px}
+.prob{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:9px;font-size:14px}
+.prob:hover{background:var(--soft)}
+.chk{width:18px;height:18px;border-radius:6px;border:1.5px solid #CBD5E1;flex:none;display:grid;place-items:center;font-size:11px;color:#fff}
+.prob.ok .chk{background:var(--green);border-color:var(--green)}
+.prob .t{flex:1}
+.prob.ok .t{color:var(--muted)}
+.d{font-size:12px;font-weight:700}
+.d.E{color:var(--green)}.d.M{color:var(--amber)}.d.H{color:var(--red)}
+.recent{display:flex;flex-direction:column}
+.recent a{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--border);font-size:14px;font-weight:600}
+.recent a:first-child{border-top:0}
+.recent a:hover{color:var(--purple-d)}
+.recent span{color:var(--muted);font-weight:500;white-space:nowrap}
+.empty{color:var(--muted);font-size:14px;line-height:1.6}
+.ext p{color:var(--muted);font-size:14px;margin:6px 0 16px;line-height:1.55}
+.ext .btns{display:flex;gap:10px;flex-wrap:wrap}
+.plan-card .row{display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-top:1px solid var(--border)}
+.plan-card .row:first-of-type{border-top:0}
+.plan-card .row span:first-child{color:var(--muted)}
+.plan-card .btn{width:100%;margin-top:14px}
+.err{color:var(--red);font-size:14px;margin-top:14px;min-height:20px;text-align:center}
+.spin{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--purple);border-radius:50%;margin:20vh auto;animation:s 1s linear infinite}
 @keyframes s{to{transform:rotate(360deg)}}
+@media(max-width:900px){.stats{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}}
+@media(max-width:520px){.stats{grid-template-columns:1fr}.navr .hide-sm{display:none}.pat summary{grid-template-columns:1fr 70px 48px}}
 </style>
 </head>
 <body>
 <header><div class="nav">
   <a class="brand" href="/"><img src="algosolveo-icon128.png" alt="" />AlgoSolveo</a>
-  <a class="back" href="/">← Back to home</a>
+  <div class="navr">
+    <a class="hide-sm" href="/">Home</a>
+    <a class="hide-sm" href="/#pricing">Pricing</a>
+    <span class="me hidden" id="nav-me"><img id="nav-avatar" alt="" /><button id="signout">Sign out</button></span>
+  </div>
 </div></header>
 
-<main><div class="card">
+<main>
   <div id="loading"><div class="spin"></div></div>
 
-  <div id="signed-out" class="hidden">
+  <div id="signed-out" class="center hidden"><div class="card signin">
     <h1>Sign in to AlgoSolveo</h1>
-    <p class="sub">Use the same Google account as the extension to see your plan and hints.</p>
+    <p class="sub">Use the same Google account as the extension to see your plan, hints and progress.</p>
     <button class="gbtn" id="google-btn">
       <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
       Continue with Google
     </button>
     <p class="note">New here? Signing in creates your free account: 5 AI hints a day.</p>
-  </div>
+  </div></div>
 
   <div id="signed-in" class="hidden">
-    <img class="avatar" id="avatar" alt="" />
-    <h1 id="name">Your account</h1>
-    <p class="email" id="email"></p>
-    <div class="stats">
-      <div class="stat"><div class="k">Plan</div><div class="v"><span class="pill" id="plan">Free</span></div></div>
-      <div class="stat"><div class="k">Hints left today</div><div class="v" id="hints">–</div></div>
+    <div class="hello">
+      <div><h1 id="name">Your dashboard</h1><p id="email"></p></div>
+      <a class="btn btn-primary" id="upgrade-top" href="/#pricing">Upgrade to Pro</a>
     </div>
-    <p class="note hidden" id="expires"></p>
-    <a class="btn btn-primary" id="upgrade" href="/#pricing">Upgrade to Pro</a>
-    <button class="btn btn-ghost" id="signout">Sign out</button>
+
+    <div class="stats">
+      <div class="card stat"><div class="k">Plan</div><div class="v"><span class="pill" id="plan">Free</span></div><div class="s" id="plan-sub">5 AI hints a day</div></div>
+      <div class="card stat"><div class="k">Hints left today</div><div class="v" id="hints">–</div><div class="bar"><i id="hints-bar"></i></div></div>
+      <div class="card stat"><div class="k">Problems solved</div><div class="v" id="solved">0</div><div class="bar"><i id="solved-bar"></i></div></div>
+      <div class="card stat"><div class="k">Patterns completed</div><div class="v" id="patterns">0</div><div class="s" id="patterns-sub">of 48 patterns</div></div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="h2row"><h2>Pattern roadmap</h2>
+          <div class="filters"><button data-f="all" class="on">All</button><button data-f="started">In progress</button><button data-f="todo">Not started</button></div>
+        </div>
+        <div id="roadmap"></div>
+      </div>
+
+      <div class="side">
+        <div class="card"><h2 style="margin-bottom:6px">Recently solved</h2><div class="recent" id="recent"></div></div>
+
+        <div class="card ext">
+          <h2>The AlgoSolveo extension</h2>
+          <p>Hints, progress and your plan sync to this account. Open any LeetCode problem and click the AlgoSolveo icon to start.</p>
+          <div class="btns">
+            <a class="btn btn-primary" href="https://leetcode.com/problemset/" target="_blank" rel="noopener">Open LeetCode</a>
+            <a class="btn btn-line" href="https://github.com/M-k-reddy/AlgoSolveo" target="_blank" rel="noopener">Get the extension</a>
+          </div>
+        </div>
+
+        <div class="card plan-card">
+          <h2 style="margin-bottom:10px">Your plan</h2>
+          <div class="row"><span>Plan</span><b id="pc-plan">Free</b></div>
+          <div class="row"><span>AI hints</span><b id="pc-hints">5 a day</b></div>
+          <div class="row"><span id="pc-exp-k">Resets</span><b id="pc-exp">Daily</b></div>
+          <a class="btn btn-primary" id="upgrade" href="/#pricing">Upgrade to Pro</a>
+        </div>
+      </div>
+    </div>
   </div>
 
   <p class="err" id="err"></p>
-</div></main>
+</main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -89,41 +174,86 @@ const SUPABASE_URL = "https://qxlmqxslpwqbrisywzsp.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_xnrdX1gkErcDhVHZf2l7yA_dFMQSa5k";
 const FREE_DAILY_HINTS = 5; // keep in sync with the hint Edge Function
 
+// Same roadmap as the extension (sidepanel.js ROADMAP_PATTERNS): pattern -> [slug, title, E/M/H]
+const ROADMAP = {"Array — Two Pointers":{"name":"Array — Two Pointers","p":[["move-zeroes","Move Zeroes","E"],["two-sum-ii-input-array-is-sorted","Two Sum II","M"],["3sum","3Sum","M"],["sort-colors","Sort Colors","M"],["container-with-most-water","Container With Most Water","M"],["trapping-rain-water","Trapping Rain Water","H"]]},"Array — Sliding Window":{"name":"Array — Sliding Window","p":[["maximum-sum-of-distinct-subarrays-with-length-k","Maximum Sum Subarray of Size K","E"],["max-consecutive-ones","Max Consecutive Ones","E"],["max-consecutive-ones-iii","Max Consecutive Ones III","M"],["subarray-product-less-than-k","Subarray Product Less Than K","M"],["fruit-into-baskets","Fruits Into Baskets","M"],["minimum-size-subarray-sum","Minimum Size Subarray Sum","M"],["sliding-window-maximum","Sliding Window Maximum","H"],["subarrays-with-k-different-integers","Subarray with K Distinct Integers","H"]]},"Array — Prefix Sum":{"name":"Array — Prefix Sum","p":[["find-pivot-index","Find Pivot Index","E"],["subarray-sum-equals-k","Subarray Sum Equals K","M"],["matrix-block-sum","Matrix Block Sum","M"],["product-of-array-except-self","Product of Array Except Self","M"],["continuous-subarray-sum","Continuous Subarray Sum","M"],["subarray-sums-divisible-by-k","Subarray Sum Divisible by K","M"]]},"Array — Kadane's Algorithm":{"name":"Array — Kadane's Algorithm","p":[["maximum-subarray","Maximum Subarray","M"],["maximum-product-subarray","Maximum Product Subarray","M"],["maximum-sum-circular-subarray","Maximum Sum Circular Subarray","M"],["maximum-absolute-sum-of-any-subarray","Maximum Absolute Sum of Any Subarray","M"]]},"Strings — Palindrome":{"name":"Strings — Palindrome","p":[["reverse-string","Reverse a String","E"],["valid-palindrome","Valid Palindrome","E"],["valid-palindrome-ii","Valid Palindrome II","E"],["longest-palindromic-substring","Longest Palindromic Substring","M"],["palindromic-substrings","Palindromic Substrings","M"]]},"Strings — Sliding Window":{"name":"Strings — Sliding Window","p":[["find-all-anagrams-in-a-string","Find All Anagrams in a String","M"],["longest-substring-without-repeating-characters","Longest Substring Without Repeating Characters","M"],["permutation-in-string","Permutation in String","M"],["minimum-window-substring","Minimum Window Substring","H"],["substring-with-concatenation-of-all-words","Substring with Concatenation of All Words","H"]]},"Binary Search — Classic":{"name":"Binary Search — Classic","p":[["binary-search","Binary Search","E"],["sqrtx","Sqrt(x)","E"],["search-insert-position","Search Insert Position","E"],["search-in-rotated-sorted-array","Search in Rotated Sorted Array","M"],["find-minimum-in-rotated-sorted-array","Find Minimum in Rotated Sorted Array","M"],["find-peak-element","Find Peak Element","M"],["find-first-and-last-position-of-element-in-sorted-array","Find First and Last Position of Element","M"],["search-a-2d-matrix","Search a 2D Matrix","M"],["search-a-2d-matrix-ii","Search a 2D Matrix II","M"]]},"Binary Search on Answers":{"name":"Binary Search on Answers","p":[["koko-eating-bananas","Koko Eating Bananas","M"],["capacity-to-ship-packages-within-d-days","Capacity To Ship Packages Within D Days","M"],["minimum-speed-to-arrive-on-time","Min Speed to Arrive on Time","M"],["minimum-number-of-days-to-make-m-bouquets","Min Days to Make M Bouquets","M"],["magnetic-force-between-two-balls","Magnetic Force Between Two Balls","M"],["split-array-largest-sum","Split Array Largest Sum","H"]]},"Stack — Monotonic":{"name":"Stack — Monotonic","p":[["next-greater-element-i","Next Greater Element I","E"],["next-greater-element-ii","Next Greater Element II","M"],["daily-temperatures","Daily Temperatures","M"],["online-stock-span","Online Stock Span","M"],["asteroid-collision","Asteroid Collision","M"],["largest-rectangle-in-histogram","Largest Rectangle in Histogram","H"],["maximal-rectangle","Maximal Rectangle","H"]]},"Stack — Expressions":{"name":"Stack — Expressions","p":[["basic-calculator-ii","Basic Calculator II","M"],["evaluate-reverse-polish-notation","Evaluate Reverse Polish Notation","M"],["decode-string","Decode String","M"],["basic-calculator","Basic Calculator I","H"]]},"Stack — Simulation":{"name":"Stack — Simulation","p":[["backspace-string-compare","Backspace String Compare","E"],["remove-all-adjacent-duplicates-in-string","Remove All Adjacent Duplicates","E"],["make-the-string-great","Make the String Great","E"],["minimum-string-length-after-removing-substrings","Minimum String Length After Removing Substrings","M"]]},"Stack — Parenthesis":{"name":"Stack — Parenthesis","p":[["valid-parentheses","Valid Parentheses","E"],["minimum-add-to-make-parentheses-valid","Minimum Add to Make Parentheses Valid","M"],["score-of-parentheses","Score of Parentheses","M"],["longest-valid-parentheses","Longest Valid Parentheses","H"]]},"Stack — Design":{"name":"Stack — Design","p":[["implement-queue-using-stacks","Implement Queue using Stacks","E"],["implement-stack-using-queues","Implement Stack using Queues","E"],["min-stack","Min Stack","M"],["design-a-stack-with-increment-operation","Design Stack with Increment Operation","M"]]},"Stack — Greedy":{"name":"Stack — Greedy","p":[["remove-k-digits","Remove K Digits","M"],["remove-duplicate-letters","Remove Duplicate Letters","M"],["smallest-subsequence-of-distinct-characters","Smallest Subsequence of Distinct Characters","M"],["minimum-remove-to-make-valid-parentheses","Minimum Remove to Make Valid Parentheses","M"],["create-maximum-number","Create Maximum Number","H"]]},"Recursion — Linear":{"name":"Recursion — Linear","p":[["fibonacci-number","Fibonacci Number","E"],["climbing-stairs","Climbing Stairs","E"],["powx-n","Pow(x, n)","M"],["unique-paths","Unique Paths","M"],["house-robber","House Robber","M"]]},"Recursion — Divide & Conquer":{"name":"Recursion — Divide & Conquer","p":[["median-of-two-sorted-arrays","Median of Two Sorted Arrays","H"],["reverse-linked-list","Reverse Linked List (Recursive)","E"],["merge-two-sorted-lists","Merge 2 Sorted Lists","E"],["subsets","Generate All Subsets","M"],["target-sum","Target Sum / Count Subsequences","M"]]},"Linked List — Basics & Fast/Slow":{"name":"Linked List — Basics & Fast/Slow","p":[["middle-of-the-linked-list","Middle of the Linked List","E"],["linked-list-cycle","Linked List Cycle","E"],["intersection-of-two-linked-lists","Intersection of Two Linked Lists","E"],["remove-nth-node-from-end-of-list","Remove Nth Node from End","M"],["linked-list-cycle-ii","Linked List Cycle II","M"],["odd-even-linked-list","Odd-Even Linked List","M"],["design-linked-list","Design Linked List","M"]]},"Linked List — Reversal":{"name":"Linked List — Reversal","p":[["reverse-linked-list","Reverse a Linked List","E"],["palindrome-linked-list","Palindrome Linked List","E"],["reverse-linked-list-ii","Reverse Linked List II","M"],["maximum-twin-sum-of-a-linked-list","Maximum Twin Sum of a Linked List","M"],["swap-nodes-in-pairs","Swap Nodes in Pairs","M"],["rotate-list","Rotate List","M"],["reverse-nodes-in-k-group","Reverse Nodes in k-Group","H"]]},"Linked List — Merge & Sort":{"name":"Linked List — Merge & Sort","p":[["merge-two-sorted-lists","Merge Two Sorted Lists","E"],["remove-duplicates-from-sorted-list","Remove Duplicates from Sorted List","E"],["add-two-numbers","Add Two Numbers","M"],["sort-list","Sort List","M"],["reorder-list","Reorder List","M"],["partition-list","Partition List","M"],["copy-list-with-random-pointer","Copy List with Random Pointer","M"],["merge-k-sorted-lists","Merge K Sorted Lists","H"]]},"Doubly Linked List":{"name":"Doubly Linked List","p":[["lru-cache","LRU Cache","M"],["flatten-a-multilevel-doubly-linked-list","Flatten Multilevel DLL","M"],["lfu-cache","LFU Cache","H"]]},"HashMap — Frequency & Prefix":{"name":"HashMap — Frequency & Prefix","p":[["majority-element","Majority Element","E"],["top-k-frequent-elements","Top K Frequent Elements","M"],["sort-characters-by-frequency","Sort Characters By Frequency","M"]]},"Tree — DFS":{"name":"Tree — DFS","p":[["binary-tree-inorder-traversal","Inorder Traversal","E"],["symmetric-tree","Symmetric Tree","E"],["diameter-of-binary-tree","Diameter of Binary Tree","E"],["balanced-binary-tree","Balanced Binary Tree","E"],["maximum-depth-of-binary-tree","Maximum Depth of Binary Tree","E"],["path-sum","Path Sum","E"],["subtree-of-another-tree","Subtree of Another Tree","E"],["path-sum-ii","Path Sum II","M"],["path-sum-iii","Path Sum III","M"],["count-complete-tree-nodes","Count Complete Tree Nodes","M"],["all-nodes-distance-k-in-binary-tree","All Nodes Distance K in Binary Tree","M"],["binary-tree-maximum-path-sum","Binary Tree Maximum Path Sum","H"],["binary-tree-cameras","Binary Tree Cameras","H"]]},"Tree — BFS / Level Order":{"name":"Tree — BFS / Level Order","p":[["binary-tree-level-order-traversal","Binary Tree Level Order Traversal","M"],["binary-tree-zigzag-level-order-traversal","Binary Tree Zigzag Level Order Traversal","M"],["average-of-levels-in-binary-tree","Average of Levels in Binary Tree","E"],["binary-tree-right-side-view","Binary Tree Right Side View","M"],["vertical-order-traversal-of-a-binary-tree","Vertical Order Traversal","M"],["maximum-width-of-binary-tree","Maximum Width of Binary Tree","M"]]},"Tree — LCA & Construction":{"name":"Tree — LCA & Construction","p":[["invert-binary-tree","Invert Binary Tree","E"],["lowest-common-ancestor-of-a-binary-tree","Lowest Common Ancestor of Binary Tree","M"],["flatten-binary-tree-to-linked-list","Flatten Binary Tree to Linked List","M"],["construct-binary-tree-from-preorder-and-inorder-traversal","Construct Binary Tree from Preorder & Inorder","M"],["construct-binary-tree-from-inorder-and-postorder-traversal","Construct Binary Tree from Inorder & Postorder","M"],["kth-ancestor-of-a-tree-node","Kth Ancestor of a Tree Node","H"],["serialize-and-deserialize-binary-tree","Serialize and Deserialize Binary Tree","H"]]},"Binary Search Tree":{"name":"Binary Search Tree","p":[["convert-sorted-array-to-binary-search-tree","Convert Sorted Array to BST","E"],["search-in-a-binary-search-tree","Search in a BST","E"],["insert-into-a-binary-search-tree","Insert into a BST","M"],["validate-binary-search-tree","Validate Binary Search Tree","M"],["delete-node-in-a-bst","Delete Node in a BST","M"],["kth-smallest-element-in-a-bst","Kth Smallest Element in BST","M"],["convert-bst-to-greater-tree","Convert BST to Greater Tree","M"],["binary-search-tree-iterator","Binary Search Tree Iterator","M"],["lowest-common-ancestor-of-a-binary-search-tree","Lowest Common Ancestor of BST","M"],["recover-binary-search-tree","Recover BST","M"],["maximum-sum-bst-in-binary-tree","Maximum Sum BST in Binary Tree","H"]]},"Graph — BFS":{"name":"Graph — BFS","p":[["01-matrix","01 Matrix","M"],["clone-graph","Clone Graph","M"],["rotting-oranges","Rotting Oranges","M"],["shortest-path-in-binary-matrix","Shortest Path in Binary Matrix","M"],["word-ladder","Word Ladder","H"]]},"Graph — DFS":{"name":"Graph — DFS","p":[["flood-fill","Flood Fill","E"],["number-of-islands","Number of Islands","M"],["all-paths-from-source-to-target","All Paths from Source to Target","M"],["find-eventual-safe-states","Find Eventual Safe States","M"],["number-of-provinces","Count Provinces","M"],["surrounded-regions","Surrounded Regions","M"],["is-graph-bipartite","Is Graph Bipartite","M"],["critical-connections-in-a-network","Critical Connections in a Network","H"]]},"Graph — Topological Sort":{"name":"Graph — Topological Sort","p":[["course-schedule","Course Schedule","M"],["course-schedule-ii","Course Schedule II","M"],["find-eventual-safe-states","Find Eventual Safe States","M"],["alien-dictionary","Alien Dictionary","H"],["reconstruct-itinerary","Reconstruct Itinerary","H"]]},"Graph — Union Find & MST":{"name":"Graph — Union Find & MST","p":[["redundant-connection","Redundant Connection","M"],["min-cost-to-connect-all-points","Connecting Cities (Min Cost)","M"],["accounts-merge","Accounts Merge","M"],["number-of-islands","Number of Islands II","M"]]},"Graph — Shortest Path":{"name":"Graph — Shortest Path","p":[["network-delay-time","Network Delay Time","M"],["cheapest-flights-within-k-stops","Cheapest Flights Within K Stops","M"],["swim-in-rising-water","Swim in Rising Water","M"],["path-with-minimum-effort","Path With Minimum Effort","M"],["find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance","Find the City With Smallest Neighbors","M"]]},"Heap — Top K Elements":{"name":"Heap — Top K Elements","p":[["top-k-frequent-elements","Top K Frequent Elements","M"],["top-k-frequent-words","K Frequent Words","M"],["kth-largest-element-in-an-array","Kth Largest Element in an Array","M"],["find-k-pairs-with-smallest-sums","Find K Pairs with Smallest Sums","M"],["find-median-from-data-stream","Find Median from Data Stream","H"],["merge-k-sorted-lists","Merge K Sorted Lists","H"],["smallest-range-covering-elements-from-k-lists","Smallest Range Covering K Lists","H"]]},"Heap — Sliding & Design":{"name":"Heap — Sliding & Design","p":[["task-scheduler","Task Scheduler","M"],["reorganize-string","Reorganize String","M"],["sliding-window-maximum","Sliding Window Maximum","H"],["sliding-window-median","Sliding Window Median","H"]]},"Backtracking — Choice Based":{"name":"Backtracking — Choice Based","p":[["subsets","Subsets","M"],["subsets-ii","Subsets II","M"],["combination-sum","Combination Sum","M"],["combination-sum-ii","Combination Sum II","M"],["permutations","Permutations","M"],["permutations-ii","Permutations II","M"],["generate-parentheses","Generate Parentheses","M"],["palindrome-partitioning","Palindrome Partitioning","M"],["restore-ip-addresses","Restore IP Addresses","M"]]},"Backtracking — Constraint Based":{"name":"Backtracking — Constraint Based","p":[["partition-to-k-equal-sum-subsets","Partition to K Equal Sum Subsets","M"],["word-search","Word Search","M"],["path-with-maximum-gold","Path with Maximum Gold","M"],["n-queens","N-Queens","H"],["sudoku-solver","Sudoku Solver","H"],["word-search-ii","Word Search II","H"],["unique-paths-iii","Unique Paths III","H"]]},"Backtracking — Sequence Gen":{"name":"Backtracking — Sequence Gen","p":[["letter-combinations-of-a-phone-number","Letter Combinations of a Phone Number","M"],["all-possible-full-binary-trees","All Possible Full Binary Trees","M"],["expression-add-operators","Expression Add Operators","H"],["word-break-ii","Word Break II","H"]]},"Greedy — Intervals":{"name":"Greedy — Intervals","p":[["merge-intervals","Merge Intervals","M"],["insert-interval","Insert Interval","M"],["non-overlapping-intervals","Non-overlapping Intervals","M"],["minimum-number-of-arrows-to-burst-balloons","Minimum Arrows to Burst Balloons","M"],["jump-game","Jump Game","M"],["jump-game-ii","Jump Game II","M"],["car-pooling","Car Pooling","M"],["minimum-number-of-taps-to-open-to-water-a-garden","Min Taps to Water Garden","H"]]},"Greedy — Sorting":{"name":"Greedy — Sorting","p":[["maximum-units-on-a-truck","Maximum Units on a Truck","E"],["largest-number","Largest Number","M"],["partition-labels","Partition Labels","M"],["next-permutation","Next Permutation","M"],["candy","Candy Distribution","H"]]},"DP — 1D Linear":{"name":"DP — 1D Linear","p":[["climbing-stairs","Climbing Stairs","E"],["house-robber","House Robber","M"],["decode-ways","Decode Ways","M"]]},"DP — 2D Grid":{"name":"DP — 2D Grid","p":[["unique-paths","Unique Paths","M"],["unique-paths-ii","Unique Paths II","M"],["minimum-path-sum","Minimum Path Sum","M"],["minimum-falling-path-sum","Minimum Falling Path Sum","M"],["dungeon-game","Dungeon Game","H"],["cherry-pickup","Cherry Pickup","H"]]},"DP — Strings":{"name":"DP — Strings","p":[["longest-common-subsequence","Longest Common Subsequence","M"],["longest-palindromic-subsequence","Longest Palindromic Subsequence","M"],["edit-distance","Edit Distance","M"],["shortest-common-supersequence","Shortest Common Supersequence","M"],["minimum-insertion-steps-to-make-a-string-palindrome","Minimum Insertions to Make Palindrome","M"],["regular-expression-matching","Regular Expression Matching","H"],["distinct-subsequences","Distinct Subsequences","H"],["palindrome-partitioning-ii","Palindrome Partitioning II","H"]]},"DP — Intervals":{"name":"DP — Intervals","p":[["burst-balloons","Burst Balloons","H"],["minimum-cost-to-merge-stones","Minimum Cost to Merge Stones","H"],["minimum-cost-to-cut-a-stick","Min Cost to Cut a Stick","H"]]},"DP — Trees & DAGs":{"name":"DP — Trees & DAGs","p":[["house-robber-iii","House Robber III","M"],["path-sum-iii","Path Sum III","M"]]},"DP — Knapsack":{"name":"DP — Knapsack","p":[["partition-equal-subset-sum","Partition Equal Subset Sum","M"],["coin-change","Coin Change","M"],["coin-change-ii","Coin Change II","M"],["target-sum","Target Sum","M"]]},"DP — Stocks":{"name":"DP — Stocks","p":[["best-time-to-buy-and-sell-stock","Best Time to Buy and Sell Stock","E"],["best-time-to-buy-and-sell-stock-ii","Best Time to Buy and Sell Stock II","M"],["best-time-to-buy-and-sell-stock-with-cooldown","Best Time to Buy and Sell Stock with Cooldown","M"],["best-time-to-buy-and-sell-stock-with-transaction-fee","Best Time to Buy and Sell Stock with Fee","M"],["best-time-to-buy-and-sell-stock-iii","Best Time to Buy and Sell Stock III","H"],["best-time-to-buy-and-sell-stock-iv","Best Time to Buy and Sell Stock IV","H"]]},"Trie — Basic & Word Break":{"name":"Trie — Basic & Word Break","p":[["implement-trie-prefix-tree","Implement Trie (Prefix Tree)","M"],["add-and-search-word-data-structure-design","Add and Search Word","M"],["longest-common-prefix","Longest Common Prefix","M"],["search-suggestions-system","Search Suggestions System","M"],["word-break","Word Break","M"],["replace-words","Replace Words","M"],["concatenated-words","Concatenated Words","H"]]},"Trie — Bitwise XOR":{"name":"Trie — Bitwise XOR","p":[["maximum-xor-of-two-numbers-in-an-array","Maximum XOR of Two Numbers in Array","M"],["sum-of-all-subset-xor-totals","Sum of All Subset XOR Totals","E"],["maximum-xor-with-an-element-from-array","Maximum XOR With an Element From Array","H"]]},"Bit Manipulation — Basics":{"name":"Bit Manipulation — Basics","p":[["missing-number","Missing Number","E"],["number-of-1-bits","Number of 1 Bits","E"],["power-of-two","Power of Two","E"],["single-number","Single Number","E"],["single-number-ii","Single Number II","M"],["single-number-iii","Single Number III","M"]]},"Bit Manipulation — Subsets & XOR":{"name":"Bit Manipulation — Subsets & XOR","p":[["subsets","Subsets","M"],["subsets-ii","Subsets II","M"],["xor-queries-of-a-subarray","XOR Queries of a Subarray","M"],["maximum-xor-of-two-numbers-in-an-array","Maximum XOR of Two Numbers in Array","M"],["maximum-xor-with-an-element-from-array","Maximum XOR With an Element From Array","H"]]}};
+
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: { flowType: "pkce", detectSessionInUrl: true, persistSession: true }
 });
 const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const show = (id) => ["loading", "signed-out", "signed-in"].forEach(x => $(x).classList.toggle("hidden", x !== id));
 const todayUTC = () => new Date().toISOString().slice(0, 10);
+const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+const titles = {}; Object.values(ROADMAP).forEach(v => v.p.forEach(([s, t]) => titles[s] = t));
+const TOTAL = Object.keys(titles).length;
+let solvedSet = new Set(), filter = "all", rendering = null;
+
+function renderRoadmap() {
+  const html = Object.entries(ROADMAP).map(([pat, v]) => {
+    const n = v.p.filter(([s]) => solvedSet.has(s)).length, total = v.p.length;
+    if (filter === "started" && !(n > 0 && n < total)) return "";
+    if (filter === "todo" && n > 0) return "";
+    const rows = v.p.map(([s, t, d]) => {
+      const ok = solvedSet.has(s);
+      return `<a class="prob${ok ? " ok" : ""}" href="https://leetcode.com/problems/${esc(s)}/" target="_blank" rel="noopener"><span class="chk">${ok ? "✓" : ""}</span><span class="t">${esc(t)}</span><span class="d ${d}">${d === "E" ? "Easy" : d === "M" ? "Medium" : "Hard"}</span></a>`;
+    }).join("");
+    return `<details class="pat${n === total ? " done" : ""}"><summary><span class="pn">${esc(pat)}</span><span class="bar"><i style="width:${Math.round(n / total * 100)}%"></i></span><span class="pc">${n}/${total}</span></summary><div class="probs">${rows}</div></details>`;
+  }).join("");
+  $("roadmap").innerHTML = html || `<p class="empty">Nothing here yet.</p>`;
+}
+
+document.querySelectorAll(".filters button").forEach(b => b.onclick = () => {
+  filter = b.dataset.f;
+  document.querySelectorAll(".filters button").forEach(x => x.classList.toggle("on", x === b));
+  renderRoadmap();
+});
 
 async function render(session) {
-  if (!session) { show("signed-out"); return; }
+  if (!session) { $("nav-me").classList.add("hidden"); show("signed-out"); return; }
   const u = session.user, meta = u.user_metadata || {};
   $("email").textContent = u.email || "";
-  $("name").textContent = meta.full_name ? "Hi, " + meta.full_name.split(" ")[0] : "Your account";
-  if (meta.avatar_url) $("avatar").src = meta.avatar_url; else $("avatar").classList.add("hidden");
+  $("name").textContent = meta.full_name ? "Hi, " + meta.full_name.split(" ")[0] : "Your dashboard";
+  if (meta.avatar_url) $("nav-avatar").src = meta.avatar_url; else $("nav-avatar").classList.add("hidden");
+  $("nav-me").classList.remove("hidden");
 
-  const { data: p, error } = await sb.from("profiles")
-    .select("plan, plan_expires_at, hints_today, hints_reset_at").eq("id", u.id).maybeSingle();
-  if (error) $("err").textContent = "Couldn't load your plan. Refresh to try again.";
+  const [{ data: p, error: pe }, { data: prog, error: ge }] = await Promise.all([
+    sb.from("profiles").select("plan, plan_expires_at, hints_today, hints_reset_at").eq("id", u.id).maybeSingle(),
+    sb.from("progress").select("problem_slug, solved_at").order("solved_at", { ascending: false })
+  ]);
+  if (pe || ge) $("err").textContent = "Couldn't load all of your data. Refresh to try again.";
 
+  // Plan + hints
   const plan = p?.plan || "free";
   const paid = (plan === "pro" || plan === "pass") && (!p.plan_expires_at || new Date(p.plan_expires_at) > new Date());
-  const pill = $("plan");
-  pill.textContent = paid ? (plan === "pro" ? "Pro" : "Week Pass") : "Free";
-  pill.classList.toggle("pro", paid);
-
+  const planName = paid ? (plan === "pro" ? "Pro" : "Week Pass") : "Free";
+  $("plan").textContent = planName; $("plan").classList.toggle("pro", paid);
+  $("pc-plan").textContent = planName;
   if (paid) {
-    $("hints").textContent = "Unlimited";
-    $("upgrade").classList.add("hidden");
-    if (p.plan_expires_at) {
-      $("expires").textContent = "Active until " + new Date(p.plan_expires_at).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
-      $("expires").classList.remove("hidden");
-    }
+    $("hints").textContent = "Unlimited"; $("hints-bar").style.width = "100%";
+    $("plan-sub").textContent = "Unlimited AI hints"; $("pc-hints").textContent = "Unlimited";
+    $("pc-exp-k").textContent = "Active until"; $("pc-exp").textContent = p.plan_expires_at ? fmtDate(p.plan_expires_at) : "No end date";
+    $("upgrade").classList.add("hidden"); $("upgrade-top").classList.add("hidden");
   } else {
     const used = p && p.hints_reset_at >= todayUTC() ? p.hints_today : 0;
-    $("hints").textContent = Math.max(0, FREE_DAILY_HINTS - used) + " / " + FREE_DAILY_HINTS;
+    const left = Math.max(0, FREE_DAILY_HINTS - used);
+    $("hints").textContent = left + " / " + FREE_DAILY_HINTS;
+    $("hints-bar").style.width = (left / FREE_DAILY_HINTS * 100) + "%";
   }
+
+  // Progress
+  const rows = prog || [];
+  solvedSet = new Set(rows.map(r => r.problem_slug));
+  const onRoadmap = [...solvedSet].filter(s => titles[s]).length;
+  $("solved").textContent = onRoadmap + " / " + TOTAL;
+  $("solved-bar").style.width = (onRoadmap / TOTAL * 100) + "%";
+  const done = Object.values(ROADMAP).filter(v => v.p.every(([s]) => solvedSet.has(s))).length;
+  $("patterns").textContent = done;
+  $("patterns-sub").textContent = "of " + Object.keys(ROADMAP).length + " patterns";
+  $("recent").innerHTML = rows.length
+    ? rows.slice(0, 6).map(r => `<a href="https://leetcode.com/problems/${esc(r.problem_slug)}/" target="_blank" rel="noopener">${esc(titles[r.problem_slug] || r.problem_slug)}<span>${fmtDate(r.solved_at)}</span></a>`).join("")
+    : `<p class="empty">No solved problems yet. Mark one as solved in the extension's roadmap and it shows up here.</p>`;
+  renderRoadmap();
   show("signed-in");
 }
 
@@ -135,13 +265,16 @@ $("google-btn").onclick = async () => {
   });
   if (error) $("err").textContent = error.message;
 };
-$("signout").onclick = async () => { await sb.auth.signOut(); show("signed-out"); };
+$("signout").onclick = async () => { await sb.auth.signOut(); };
 
+let lastUser;
 sb.auth.onAuthStateChange((_e, session) => {
   if (location.search.includes("code=")) history.replaceState({}, "", location.pathname);
+  const id = session?.user?.id || null;
+  if (id === lastUser && _e !== "INITIAL_SESSION") return; // avoid re-render on token refresh
+  lastUser = id;
   render(session);
 });
-sb.auth.getSession().then(({ data }) => render(data.session));
 </script>
 </body>
 </html>
