@@ -5,6 +5,13 @@
   <url><loc>https://algosolveo.me/privacy.html</loc></url>
   <url><loc>https://algosolveo.me/terms.html</loc></url>
   <url><loc>https://algosolveo.me/refund.html</loc></url>
+  <url><loc>https://algosolveo.me/courses.html</loc></url>
+  <url><loc>https://algosolveo.me/courses/dsa-patterns.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/basics-loops-math.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/arrays-basics.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/hashing-basics.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/sorting-basics.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/matrix-2d-arrays.html</loc></url>
   <url><loc>https://algosolveo.me/patterns/array-two-pointers.html</loc></url>
   <url><loc>https://algosolveo.me/patterns/array-sliding-window.html</loc></url>
   <url><loc>https://algosolveo.me/patterns/array-prefix-sum.html</loc></url>
@@ -53,6 +60,4 @@
   <url><loc>https://algosolveo.me/patterns/trie-bitwise-xor.html</loc></url>
   <url><loc>https://algosolveo.me/patterns/bit-manipulation-basics.html</loc></url>
   <url><loc>https://algosolveo.me/patterns/bit-manipulation-subsets-xor.html</loc></url>
-<url><loc>https://algosolveo.me/courses.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://algosolveo.me/courses/dsa-patterns.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
 </urlset>
