@@ -53,4 +53,6 @@
   <url><loc>https://algosolveo.me/patterns/trie-bitwise-xor.html</loc></url>
   <url><loc>https://algosolveo.me/patterns/bit-manipulation-basics.html</loc></url>
   <url><loc>https://algosolveo.me/patterns/bit-manipulation-subsets-xor.html</loc></url>
+<url><loc>https://algosolveo.me/courses.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+<url><loc>https://algosolveo.me/courses/dsa-patterns.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
 </urlset>
