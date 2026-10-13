@@ -124,6 +124,14 @@ footer{border-top:1px solid var(--border);background:#fff}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;font-weight:600;opacity:0;transition:.25s;pointer-events:none;z-index:20}
 .toast.show{opacity:1;transform:translateX(-50%)}
 @media(max-width:760px){.pc-head{grid-template-columns:30px 1fr 18px}.pc-prog{display:none}.signed .pc-prog{display:flex;grid-column:2/3}.pc-body{padding:0 16px 16px}.gd{grid-template-columns:1fr}.how{grid-template-columns:1fr}.navr .hide-sm{display:none}.st-c{margin-left:0}}
+.sh-modal{position:fixed;inset:0;background:rgba(15,23,42,.6);display:none;align-items:center;justify-content:center;z-index:30;padding:20px}
+.sh-modal.show{display:flex}
+.sh-box{background:#fff;border-radius:18px;max-width:640px;width:100%;padding:20px;box-shadow:0 30px 80px -20px rgba(15,23,42,.5)}
+.sh-box h3{font-size:18px;font-weight:800;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.sh-box h3 button{font-size:22px;color:var(--muted);line-height:1;padding:4px 8px}
+.sh-box img{width:100%;border-radius:12px;border:1px solid var(--border);display:block}
+.sh-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.sh-acts .btn{flex:1;min-width:130px;justify-content:center}
 </style>
 </head>
 <body>
@@ -156,6 +164,7 @@ footer{border-top:1px solid var(--border);background:#fff}
     <div class="txt" id="me-txt">Your progress<span id="me-sub"></span></div>
     <div class="bar"><i id="me-bar"></i></div>
     <a class="btn btn-line btn-sm" id="me-next" href="#">Continue →</a>
+    <button class="btn btn-primary btn-sm" id="me-share" type="button">Share progress</button>
   </div>
 </div></section>
 
@@ -488,6 +497,18 @@ footer{border-top:1px solid var(--border);background:#fff}
   <nav><a href="/">Home</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a></nav>
 </div></footer>
 <div class="toast" id="toast"></div>
+<div class="sh-modal" id="sh-modal" role="dialog" aria-modal="true" aria-label="Share your progress"><div class="sh-box">
+  <h3>Share your progress <button type="button" id="sh-x" aria-label="Close">×</button></h3>
+  <img id="sh-img" alt="Your AlgoSolveo progress card" />
+  <div class="sh-acts">
+    <button class="btn btn-primary btn-sm" id="sh-native" type="button">Share image</button>
+    <a class="btn btn-line btn-sm" id="sh-dl" download="algosolveo-progress.png" href="#">Download</a>
+    <a class="btn btn-line btn-sm" id="sh-li" target="_blank" rel="noopener" href="#">LinkedIn</a>
+    <a class="btn btn-line btn-sm" id="sh-x2" target="_blank" rel="noopener" href="#">X</a>
+    <a class="btn btn-line btn-sm" id="sh-wa" target="_blank" rel="noopener" href="#">WhatsApp</a>
+  </div>
+</div></div>
+
 
 <script>
 (function(){
@@ -551,6 +572,10 @@ footer{border-top:1px solid var(--border);background:#fff}
     $("me-strip").classList.remove("hidden");
     $("me-sub").textContent = totalDone+" of "+total+" problems solved"+(next?" · next up: "+next.dataset.p:" · roadmap complete!");
     $("me-bar").style.width = (totalDone/total*100)+"%";
+    let pDone=0, curStage=null;
+    cards.forEach(c=>{ if(c.classList.contains("done")) pDone++; });
+    if(next){ const st=next.closest("[data-stage]"); if(st) curStage=st.querySelector(".st-n").textContent+": "+st.querySelector("h2").textContent; }
+    window.__stats={solved:totalDone,total:total,patterns:pDone,pTotal:cards.length,stage:curStage||"Roadmap complete",next:next?next.dataset.p:null};
     if(next){ $("me-next").onclick=(e)=>{e.preventDefault();go(next.id);}; } else $("me-next").classList.add("hidden");
   };
 })();
@@ -566,10 +591,76 @@ footer{border-top:1px solid var(--border);background:#fff}
     const meta = session.user.user_metadata || {};
     document.getElementById("nav-signin").classList.add("hidden");
     const me = document.getElementById("nav-me"); me.classList.remove("hidden");
+    window.__meName = (meta.full_name||meta.name||"").split(" ")[0];
     if(meta.avatar_url) document.getElementById("nav-avatar").src = meta.avatar_url; else document.getElementById("nav-avatar").classList.add("hidden");
     const { data } = await sb.from("progress").select("problem_slug");
     window.__applyProgress(new Set((data||[]).map(r => r.problem_slug)));
   }catch(e){ /* page works fine signed out */ }
+})();
+</script>
+<script>
+(function(){
+  const $=(id)=>document.getElementById(id);
+  const SITE="https://algosolveo.me/roadmap.html";
+  function rr(x,a,b,w,h,r){x.beginPath();x.roundRect?x.roundRect(a,b,w,h,r):x.rect(a,b,w,h);}
+  async function draw(){
+    const st=window.__stats; if(!st) return null;
+    try{ await Promise.all([document.fonts.load("800 60px 'Plus Jakarta Sans'"),document.fonts.load("600 24px 'Plus Jakarta Sans'")]); }catch(e){}
+    const c=document.createElement("canvas"); c.width=1200; c.height=630; const x=c.getContext("2d");
+    const F=(w,s)=>w+" "+s+"px 'Plus Jakarta Sans', system-ui, sans-serif";
+    const g=x.createLinearGradient(0,0,1200,630); g.addColorStop(0,"#1E1B4B"); g.addColorStop(1,"#0F172A"); x.fillStyle=g; x.fillRect(0,0,1200,630);
+    const gl=x.createRadialGradient(1050,80,0,1050,80,520); gl.addColorStop(0,"rgba(139,92,246,.45)"); gl.addColorStop(1,"rgba(139,92,246,0)"); x.fillStyle=gl; x.fillRect(0,0,1200,630);
+    x.fillStyle="#22D3EE"; x.font=F(700,24); x.fillText("ALGOSOLVEO · DSA PATTERN ROADMAP",72,92);
+    const who=window.__meName?window.__meName+"'s":"My";
+    x.fillStyle="#fff"; x.font=F(800,58); x.fillText(who+" progress",72,172);
+    const pct=Math.round(st.solved/st.total*100);
+    x.font=F(800,150); x.fillStyle="#fff"; x.fillText(st.solved,72,350);
+    const w1=x.measureText(String(st.solved)).width;
+    x.font=F(600,40); x.fillStyle="#A5B4FC"; x.fillText("/ "+st.total+" problems",72+w1+18,350);
+    // bar
+    x.fillStyle="rgba(255,255,255,.12)"; rr(x,72,392,700,18,9); x.fill();
+    const bg=x.createLinearGradient(72,0,772,0); bg.addColorStop(0,"#8B5CF6"); bg.addColorStop(1,"#22D3EE"); x.fillStyle=bg;
+    rr(x,72,392,Math.max(18,700*st.solved/st.total),18,9); x.fill();
+    x.fillStyle="#E2E8F0"; x.font=F(700,24); x.fillText(pct+"% complete",72,456);
+    // side stats
+    function tile(y,big,lab){ x.fillStyle="rgba(255,255,255,.07)"; rr(x,840,y,290,130,20); x.fill(); x.fillStyle="#fff"; x.font=F(800,48); x.fillText(big,868,y+64); x.fillStyle="#94A3B8"; x.font=F(600,20); x.fillText(lab,868,y+100); }
+    tile(232,st.patterns+" / "+st.pTotal,"patterns mastered");
+    let stg=st.stage; x.font=F(800,30); 
+    x.fillStyle="rgba(255,255,255,.07)"; rr(x,840,380,290,130,20); x.fill();
+    const parts=stg.split(": "); x.fillStyle="#fff"; x.font=F(800,30); x.fillText(parts[0],868,432);
+    x.fillStyle="#94A3B8"; x.font=F(600,20); let lab=parts[1]||"";
+    while(x.measureText(lab).width>240 && lab.length>4) lab=lab.slice(0,-2); if(lab!==(parts[1]||"")) lab=lab.trim()+"…";
+    x.fillText(lab,868,470);
+    x.fillStyle="#fff"; x.font=F(700,26); x.fillText("Learning patterns, not memorising answers.",72,560);
+    x.fillStyle="#22D3EE"; x.font=F(700,24); x.fillText("algosolveo.me/roadmap",72,596);
+    return c;
+  }
+  let blob=null;
+  $("me-share") && $("me-share").addEventListener("click", async ()=>{
+    const c=await draw(); if(!c) return;
+    const url=c.toDataURL("image/png"); $("sh-img").src=url; $("sh-dl").href=url;
+    c.toBlob(b=>blob=b,"image/png");
+    const st=window.__stats;
+    const txt="I've solved "+st.solved+" of "+st.total+" problems on the AlgoSolveo DSA pattern roadmap ("+st.patterns+"/"+st.pTotal+" patterns mastered). Learning the patterns, not memorising answers.";
+    $("sh-li").href="https://www.linkedin.com/sharing/share-offsite/?url="+encodeURIComponent(SITE);
+    $("sh-x2").href="https://twitter.com/intent/tweet?text="+encodeURIComponent(txt)+"&url="+encodeURIComponent(SITE);
+    $("sh-wa").href="https://wa.me/?text="+encodeURIComponent(txt+" "+SITE);
+    $("sh-native").dataset.t=txt;
+    $("sh-native").style.display=(navigator.canShare?"":"none");
+    $("sh-modal").classList.add("show");
+  });
+  $("sh-native").addEventListener("click", async ()=>{
+    const t=$("sh-native").dataset.t;
+    try{
+      const f=new File([blob],"algosolveo-progress.png",{type:"image/png"});
+      if(blob && navigator.canShare && navigator.canShare({files:[f]})) await navigator.share({files:[f],text:t+" "+SITE});
+      else await navigator.share({text:t,url:SITE});
+    }catch(e){}
+  });
+  const close=()=>$("sh-modal").classList.remove("show");
+  $("sh-x").addEventListener("click",close);
+  $("sh-modal").addEventListener("click",e=>{ if(e.target.id==="sh-modal") close(); });
+  document.addEventListener("keydown",e=>{ if(e.key==="Escape") close(); });
 })();
 </script>
 </body>
