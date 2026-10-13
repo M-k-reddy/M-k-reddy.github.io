@@ -285,6 +285,33 @@ kbd{font-family:var(--mono);font-size:13px;background:var(--ink);color:var(--cya
   *,*::before,*::after{animation:none!important;transition:none!important}
   .js .reveal{opacity:1;transform:none}
 }
+.try-sec{background:var(--soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.try{max-width:1000px;margin:0 auto;background:#fff;border:1px solid var(--border);border-radius:var(--r-l);box-shadow:var(--shadow);overflow:hidden}
+.try-tabs{display:flex;gap:4px;padding:8px;border-bottom:1px solid var(--border);background:var(--soft);overflow-x:auto}
+.try-tab{min-height:40px;padding:0 16px;border-radius:10px;font-weight:600;font-size:14px;color:var(--muted);white-space:nowrap}
+.try-tab.on{background:#fff;color:var(--purple-d);box-shadow:var(--shadow)}
+.try-body{display:grid;grid-template-columns:1fr 1.15fr}
+.try-q{padding:28px;border-right:1px solid var(--border)}
+.try-meta{display:flex;gap:8px;margin-bottom:10px}
+.try-diff,.try-pat{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px}
+.try-diff{background:#DCFCE7;color:#15803D}.try-diff.M{background:#FEF3C7;color:#B45309}
+.try-pat{background:#EDE9FE;color:var(--purple-d)}
+.try-pat.hide{filter:blur(5px);user-select:none}
+.try-q h3{font-size:20px;font-weight:800;letter-spacing:-.01em;margin-bottom:10px}
+.try-q p{font-size:15px;color:var(--ink-2);margin-bottom:14px}
+.try-ex{display:block;font-family:var(--mono);font-size:13px;background:var(--soft);border:1px solid var(--border);border-radius:10px;padding:12px;white-space:pre-wrap;color:var(--ink-2)}
+.try-chat{background:var(--ink);padding:22px;display:flex;flex-direction:column;gap:14px;min-height:340px}
+.try-log{display:flex;flex-direction:column;gap:10px;flex:1}
+.tb{max-width:92%;padding:11px 14px;border-radius:14px;font-size:14.5px;line-height:1.55;animation:tbIn .35s ease}
+.tb.ai{background:#1E293B;color:#E2E8F0;border-top-left-radius:4px}
+.tb.ai::before{content:"AlgoSolveo";display:block;font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:2px}
+.tb.me{align-self:flex-end;background:var(--grad);color:#fff;border-top-right-radius:4px}
+.tb.win{background:#14532D;color:#DCFCE7}
+.tb.win::before{color:#86EFAC}
+@keyframes tbIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.try-actions{display:flex;gap:10px;flex-wrap:wrap}
+.try-actions .hidden{display:none}
+@media (max-width:820px){.try-body{grid-template-columns:1fr}.try-q{border-right:0;border-bottom:1px solid var(--border)}}
 </style>
 </head>
 <body>
@@ -517,6 +544,38 @@ kbd{font-family:var(--mono);font-size:13px;background:var(--ink);color:var(--cya
   </div>
 </section>
 
+<section id="try" class="try-sec">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Try it now · no install</span>
+      <h2 class="h2">Get stuck. Take one hint. Keep going.</h2>
+      <p class="lead">Pick a problem and reveal hints one at a time. This is how AlgoSolveo teaches inside LeetCode.</p>
+    </div>
+    <div class="try reveal">
+      <div class="try-tabs" role="tablist">
+        <button class="try-tab on" data-i="0" role="tab">Two Sum</button>
+        <button class="try-tab" data-i="1" role="tab">Valid Parentheses</button>
+        <button class="try-tab" data-i="2" role="tab">Container With Most Water</button>
+      </div>
+      <div class="try-body">
+        <div class="try-q">
+          <div class="try-meta"><span class="try-diff" id="try-diff">Easy</span><span class="try-pat" id="try-pat">HashMap</span></div>
+          <h3 id="try-title">1. Two Sum</h3>
+          <p id="try-desc"></p>
+          <code class="try-ex" id="try-ex"></code>
+        </div>
+        <div class="try-chat">
+          <div class="try-log" id="try-log"><div class="tb ai">Stuck? Ask for the smallest hint that gets you moving. No spoilers.</div></div>
+          <div class="try-actions">
+            <button class="btn btn-primary" id="try-next">Give me hint 1</button>
+            <a class="btn btn-outline hidden" id="try-solve" target="_blank" rel="noopener" href="#">Solve it on LeetCode →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="soon">
   <div class="wrap">
     <div class="soon-box reveal">
@@ -712,6 +771,41 @@ kbd{font-family:var(--mono);font-size:13px;background:var(--ink);color:var(--cya
     var mm = document.querySelector(".mobile-menu .m-signin");
     if (mm) mm.textContent = "Dashboard";
   } catch (e) {}
+})();
+</script>
+<script>
+(function(){
+  var P=[
+    {t:"1. Two Sum",d:"E",pat:"HashMap",slug:"two-sum",desc:"Given an array of integers nums and a target, return the indices of the two numbers that add up to target. Exactly one answer exists.",ex:"nums = [2,7,11,15], target = 9\n→ [0,1]",
+     h:["Checking every pair works, but it's O(n²). For each number x, what exact value are you hoping to find somewhere else?","You need target − x. What data structure answers \"have I seen this value before, and where?\" in O(1)?","Walk the array once. Before storing x, check whether target − x is already in a map of value → index. If it is, you have your pair."]},
+    {t:"20. Valid Parentheses",d:"E",pat:"Stack",slug:"valid-parentheses",desc:"Given a string of only ()[]{}, decide whether every bracket is closed by the same type, in the right order.",ex:"s = \"([]{})\" → true\ns = \"(]\"     → false",
+     h:["When you read a closing bracket, which opening bracket does it have to match: the first one you saw, or the most recent unmatched one?","\"Most recent first\" is Last-In-First-Out. Which structure behaves like that?","Push every opener. On a closer, the top of the stack must be its partner, so pop it. Otherwise it's invalid. At the end the stack must be empty."]},
+    {t:"11. Container With Most Water",d:"M",pat:"Two Pointers",slug:"container-with-most-water",desc:"Each element is a vertical line's height. Pick two lines that, with the x-axis, hold the most water. Return that area.",ex:"height = [1,8,6,2,5,4,8,3,7]\n→ 49",
+     h:["Area = width × the shorter height. Which pair of lines gives you the widest possible container to start from?","Start with one pointer at each end. To beat the current area while the width shrinks, which line must you move: the taller or the shorter?","Always move the shorter line inward. The taller one can never do better with a narrower width. Track the max area as you go: O(n)."]}
+  ];
+  var cur=0,step=0,$=function(id){return document.getElementById(id)};
+  function load(i){
+    cur=i;step=0;var p=P[i];
+    document.querySelectorAll(".try-tab").forEach(function(b){b.classList.toggle("on",+b.dataset.i===i)});
+    $("try-title").textContent=p.t;$("try-desc").textContent=p.desc;$("try-ex").textContent=p.ex;
+    var d=$("try-diff");d.textContent=p.d==="E"?"Easy":"Medium";d.className="try-diff "+p.d;
+    var pt=$("try-pat");pt.textContent=p.pat;pt.className="try-pat hide";pt.title="Revealed after hint 2";
+    $("try-log").innerHTML='<div class="tb ai">Stuck? Ask for the smallest hint that gets you moving. No spoilers.</div>';
+    $("try-next").textContent="Give me hint 1";$("try-next").classList.remove("hidden");
+    $("try-solve").classList.add("hidden");$("try-solve").href="https://leetcode.com/problems/"+p.slug+"/";
+  }
+  function add(cls,txt){var b=document.createElement("div");b.className="tb "+cls;b.textContent=txt;$("try-log").appendChild(b);}
+  $("try-next").addEventListener("click",function(){
+    var p=P[cur];
+    add("me",step===0?"I'm stuck. Small hint please.":step===1?"Still stuck. One more?":"Okay, show me the approach.");
+    var s=step;setTimeout(function(){add("ai",p.h[s]);},350);
+    step++;
+    if(step===2)$("try-pat").classList.remove("hide");
+    if(step<3){$("try-next").textContent="Give me hint "+(step+1);}
+    else{$("try-next").classList.add("hidden");setTimeout(function(){add("ai win","Now write it yourself. AlgoSolveo does this on every LeetCode problem, in your editor.");$("try-solve").classList.remove("hidden");},800);}
+  });
+  document.querySelectorAll(".try-tab").forEach(function(b){b.addEventListener("click",function(){load(+b.dataset.i)})});
+  load(0);
 })();
 </script>
 </body>
