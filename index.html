@@ -329,6 +329,10 @@ kbd{font-family:var(--mono);font-size:13px;background:var(--ink);color:var(--cya
 .try-actions{display:flex;gap:10px;flex-wrap:wrap}
 .try-actions .hidden{display:none}
 @media (max-width:820px){.try-body{grid-template-columns:1fr}.try-q{border-right:0;border-bottom:1px solid var(--border)}}
+#waitlist{padding:72px 0}.wl-box{max-width:640px;margin:0 auto;text-align:center;background:#fff;border:1px solid var(--border);border-radius:var(--r-l);box-shadow:var(--shadow);padding:40px 28px}
+.wl-box p{color:var(--muted);margin-top:8px}.wl-form{display:flex;gap:10px;max-width:460px;margin:22px auto 0}
+.wl-form input{flex:1;min-width:0;padding:13px 16px;border:1px solid var(--border);border-radius:12px;font:inherit;font-size:16px}
+.wl-msg{min-height:22px;font-weight:600;color:#15803D!important}@media(max-width:520px){.wl-form{flex-direction:column}}
 </style>
 </head>
 <body>
@@ -340,27 +344,27 @@ kbd{font-family:var(--mono);font-size:13px;background:var(--ink);color:var(--cya
     </nav>
     <div class="nav-cta">
       <a class="signin" href="account.html">Sign in</a>
-      <a class="btn btn-primary" href="https://github.com/M-k-reddy/AlgoSolveo" target="_blank" rel="noopener">Get Started Free</a>
+      <a class="btn btn-primary" href="#waitlist">Join waitlist</a>
     </div>
     <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span></span></button>
   </div>
   <div class="mobile-menu" id="mobile-menu">
-    <a href="#features">Features</a><a href="roadmap.html">Roadmap</a><a href="courses.html">Courses</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a class="m-signin" href="account.html">Sign in</a>
-    <a class="btn btn-primary" href="https://github.com/M-k-reddy/AlgoSolveo" target="_blank" rel="noopener">Get Started Free</a>
+    <a href="#features">Features</a><a href="roadmap.html">Roadmap</a><a href="courses.html">Courses</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a class="m-signin" href="account.html">Sign in</a>
+    <a class="btn btn-primary" href="#waitlist">Join waitlist</a>
   </div>
 </header>
 
 <main id="top">
 <section class="hero">
   <div class="wrap">
-    <span class="badge reveal"><b></b>🚀 Now in beta · Free to start</span>
+    <span class="badge reveal"><b></b>🚀 Extension launching soon · Free forever</span>
     <h1 class="reveal">Stop copying LeetCode solutions. Start <span class="grad-text">understanding</span> them.</h1>
     <p class="sub reveal">AlgoSolveo is an AI mentor that lives in a side panel next to every LeetCode problem. It gives hints, asks the right questions, and reviews your code, so the pattern actually sticks.</p>
     <div class="hero-ctas reveal">
-      <a class="btn btn-primary btn-lg" href="https://github.com/M-k-reddy/AlgoSolveo" target="_blank" rel="noopener"><span class="chrome" aria-hidden="true"></span>Add to Chrome — It's Free</a>
+      <a class="btn btn-primary btn-lg" href="#waitlist"><span class="chrome" aria-hidden="true"></span>Join the launch waitlist</a>
       <a class="btn btn-outline btn-lg" href="roadmap.html">Explore the free roadmap</a>
     </div>
-    <p class="hero-note reveal">Works on Chrome, Edge &amp; Brave · No credit card required</p>
+    <p class="hero-note reveal">Launching soon on Chrome, Edge &amp; Brave · Free forever · <a href="courses.html" style="color:inherit;text-decoration:underline">Courses are open now</a></p>
 
     <div class="mock-wrap reveal">
       <div class="mock" role="img" aria-label="AlgoSolveo side panel open next to the LeetCode Two Sum problem, guiding the user toward a HashMap solution">
@@ -612,45 +616,66 @@ kbd{font-family:var(--mono);font-size:13px;background:var(--ink);color:var(--cya
 <section id="pricing" class="pricing-sec">
   <div class="wrap">
     <div class="sec-head reveal">
-      <span class="eyebrow">Launch pricing</span>
-      <h2 class="h2">Start free. Upgrade when interviews get real.</h2>
+      <span class="eyebrow">Pricing</span>
+      <h2 class="h2">The extension stays free. Courses take you further.</h2>
     </div>
     <div class="plans">
       <div class="plan reveal">
-        <h3>Free</h3>
-        <p class="for">Build the habit</p>
+        <h3>AlgoSolveo Extension</h3>
+        <p class="for">AI hints beside every LeetCode problem</p>
         <div class="price"><b>₹0</b><span>forever</span></div>
         <ul>
-          <li>Full roadmap + progress</li>
-          <li>All 3 tutor styles</li>
-          <li>5 AI hints a day</li>
+          <li>Hints, explanations and code review</li>
+          <li>Roadmap progress on your dashboard</li>
+          <li>Launching soon on the Chrome Web Store</li>
         </ul>
-        <a class="btn btn-outline" href="https://github.com/M-k-reddy/AlgoSolveo" target="_blank" rel="noopener">Get Started</a>
-      </div>
-      <div class="plan reveal">
-        <h3>Pro</h3>
-        <p class="for">For steady practice</p>
-        <div class="price"><b>₹199</b><span>/month</span></div>
-        <ul>
-          <li>Unlimited hints, explanations and code reviews</li>
-          <li>Priority AI</li>
-        </ul>
-        <a class="btn btn-outline" href="https://github.com/M-k-reddy/AlgoSolveo" target="_blank" rel="noopener">Go Pro</a>
+        <a class="btn btn-outline" href="#waitlist">Join the waitlist</a>
       </div>
       <div class="plan pop reveal">
-        <span class="pop-badge">Most Popular</span>
-        <h3>Placement Season Pass</h3>
-        <p class="for">Best for interview season</p>
-        <div class="price"><b>₹499</b><span>for 3 months</span></div>
+        <span class="pop-badge">Live now</span>
+        <h3>DSA Patterns Bootcamp</h3>
+        <p class="for">From zero to interview-ready, in Java</p>
+        <div class="price"><b>Free</b><span>preview</span></div>
         <ul>
-          <li>Everything in Pro</li>
-          <li>Best for interview season</li>
+          <li>53 patterns, 325 LeetCode problems</li>
+          <li>Starts from loops and arrays</li>
+          <li>Step-by-step pattern guides</li>
         </ul>
-        <a class="btn btn-primary" href="https://github.com/M-k-reddy/AlgoSolveo" target="_blank" rel="noopener">Get the Pass</a>
+        <a class="btn btn-primary" href="courses/dsa-patterns.html">Start the course</a>
+      </div>
+      <div class="plan reveal">
+        <h3>Placement Courses</h3>
+        <p class="for">Aptitude, CS fundamentals, SQL, HR and more</p>
+        <div class="price"><b>Soon</b><span>launch offers for early sign-ups</span></div>
+        <ul>
+          <li>Built for campus placements</li>
+          <li>Company-wise prep tracks</li>
+          <li>Mock interviews</li>
+        </ul>
+        <a class="btn btn-outline" href="courses.html">See all courses</a>
       </div>
     </div>
   </div>
 </section>
+
+<section id="waitlist">
+  <div class="wrap">
+    <div class="wl-box reveal">
+      <span class="eyebrow">Launching soon</span>
+      <h2 class="h2">Be first to get the AlgoSolveo extension.</h2>
+      <p>One email on launch day. No spam.</p>
+      <form id="wl-form" class="wl-form"><input type="email" id="wl-email" required placeholder="you@email.com" aria-label="Email" /><button class="btn btn-primary" type="submit">Notify me</button></form>
+      <p class="wl-msg" id="wl-msg" role="status"></p>
+    </div>
+  </div>
+</section>
+<script>
+(function(){const SB="https://qxlmqxslpwqbrisywzsp.supabase.co",KEY="sb_publishable_xnrdX1gkErcDhVHZf2l7yA_dFMQSa5k";
+const f=document.getElementById("wl-form"),m=document.getElementById("wl-msg");
+f.addEventListener("submit",async e=>{e.preventDefault();const email=document.getElementById("wl-email").value.trim().toLowerCase();const btn=f.querySelector("button");btn.disabled=true;m.textContent="";
+try{const r=await fetch(SB+"/rest/v1/waitlist",{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({email,course:"extension"})});
+if(r.ok||r.status===409){m.textContent="You're on the list. We'll email you on launch day.";f.reset();}else{m.textContent="Couldn't save that. Please try again.";}}catch(_){m.textContent="Couldn't save that. Please try again.";}btn.disabled=false;});})();
+</script>
 
 <section>
   <div class="wrap">
@@ -695,8 +720,8 @@ kbd{font-family:var(--mono);font-size:13px;background:var(--ink);color:var(--cya
   <div class="wrap">
     <div class="cta-box reveal">
       <h2>Your next interview is a pattern you've already seen. Learn it properly.</h2>
-      <p>Free to start · Works on Chrome, Edge &amp; Brave</p>
-      <a class="btn btn-white btn-lg" href="https://github.com/M-k-reddy/AlgoSolveo" target="_blank" rel="noopener"><span class="chrome" aria-hidden="true"></span>Add to Chrome — It's Free</a>
+      <p>Launching soon · Free forever · Chrome, Edge &amp; Brave</p>
+      <a class="btn btn-white btn-lg" href="#waitlist"><span class="chrome" aria-hidden="true"></span>Join the launch waitlist</a>
     </div>
   </div>
 </section>
