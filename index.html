@@ -72,7 +72,8 @@ section{padding:96px 0}
 .nav-links{display:flex;gap:6px}
 .nav-links a{padding:8px 14px;border-radius:10px;font-size:15px;font-weight:500;color:var(--ink-2)}
 .nav-links a:hover{background:var(--soft);color:var(--ink)}
-.nav-cta{display:flex;align-items:center;gap:8px}
+.nav-cta{display:flex;align-items:center;gap:8px;flex:none}
+.nav-links a,.nav-cta a{white-space:nowrap}
 .nav-cta .signin{padding:10px 14px;font-weight:600;font-size:15px;color:var(--ink-2)}
 .nav-cta .signin:hover{color:var(--ink)}
 .nav-cta .signin.me{display:inline-flex;align-items:center;gap:8px}
@@ -85,7 +86,7 @@ section{padding:96px 0}
 .nav.open .burger span::before{transform:translateY(6px) rotate(45deg)}
 .nav.open .burger span::after{transform:translateY(-6px) rotate(-45deg)}
 .mobile-menu{display:none}
-@media (max-width:900px){
+@media (max-width:1000px){
   .nav-links,.nav-cta{display:none}
   .burger{display:flex}
   .nav.open .mobile-menu{display:flex;flex-direction:column;gap:4px;padding:8px 24px 24px;border-top:1px solid var(--border);background:#fff}
@@ -335,7 +336,7 @@ kbd{font-family:var(--mono);font-size:13px;background:var(--ink);color:var(--cya
   <div class="wrap nav-in">
     <a class="brand" href="#top" aria-label="AlgoSolveo home"><img src="algosolveo-icon128.png" alt="" width="32" height="32" />AlgoSolveo</a>
     <nav class="nav-links" aria-label="Main">
-      <a href="#features">Features</a><a href="roadmap.html">Roadmap</a><a href="courses.html">Courses</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>
+      <a href="#features">Features</a><a href="roadmap.html">Roadmap</a><a href="courses.html">Courses</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>
     </nav>
     <div class="nav-cta">
       <a class="signin" href="account.html">Sign in</a>
@@ -782,7 +783,7 @@ kbd{font-family:var(--mono);font-size:13px;background:var(--ink);color:var(--cya
     if (a) {
       a.classList.add("me"); a.textContent = "";
       if (m.avatar_url) { var img = document.createElement("img"); img.src = m.avatar_url; img.alt = ""; img.referrerPolicy = "no-referrer"; a.appendChild(img); }
-      a.appendChild(document.createTextNode(first ? first + " · Dashboard" : "Dashboard"));
+      a.appendChild(document.createTextNode("Dashboard")); if (first) a.title = first;
     }
     var mm = document.querySelector(".mobile-menu .m-signin");
     if (mm) mm.textContent = "Dashboard";
