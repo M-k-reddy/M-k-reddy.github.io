@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Graph BFS Pattern: When to Use It + 5 LeetCode Problems | AlgoSolveo</title>
+<meta name="description" content="Learn the Graph BFS pattern for DSA interviews: how to spot it, the key idea, and 5 LeetCode problems in order from easy to hard." />
+<link rel="canonical" href="https://algosolveo.me/patterns/graph-bfs.html" />
+<meta property="og:type" content="article" /><meta property="og:url" content="https://algosolveo.me/patterns/graph-bfs.html" />
+<meta property="og:title" content="Graph BFS pattern: when to use it + LeetCode problems" />
+<meta property="og:description" content="Learn the Graph BFS pattern for DSA interviews: how to spot it, the key idea, and 5 LeetCode problems in order from easy to hard." />
+<meta property="og:image" content="https://algosolveo.me/og-image.png" /><meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/png" href="/algosolveo-icon128.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" />
+<style>*{box-sizing:border-box;margin:0;padding:0}:root{--purple:#8B5CF6;--pd:#6D28D9;--cyan:#22D3EE;--ink:#0F172A;--ink2:#334155;--muted:#64748B;--soft:#F8FAFC;--border:#E2E8F0;--grad:linear-gradient(135deg,#8B5CF6,#6D28D9)}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}
+.nav{position:sticky;top:0;background:rgba(255,255,255,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:5}
+.nav-in,.wrap{max-width:820px;margin:0 auto;padding:0 22px}.nav-in{display:flex;align-items:center;justify-content:space-between;height:62px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px}.brand img{width:30px;height:30px;border-radius:50%}
+.nav-in nav a{margin-left:18px;font-weight:600;font-size:15px;color:var(--ink2)}
+.crumb{font-size:14px;color:var(--muted);margin:34px 0 14px}.crumb a{color:var(--pd);font-weight:600}
+.eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pd);margin-bottom:8px}
+h1{font-size:clamp(30px,5vw,44px);line-height:1.12;font-weight:800;letter-spacing:-.025em}
+.lead{font-size:18px;color:var(--muted);margin-top:14px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.meta span{font-size:13px;font-weight:700;padding:4px 12px;border-radius:999px;background:var(--soft);border:1px solid var(--border);color:var(--ink2)}
+.gd{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:32px 0}.gd div{border:1px solid var(--border);border-radius:16px;padding:20px;background:#fff}
+.gd h2{font-size:15px;font-weight:800;color:var(--pd);margin-bottom:6px}.gd p{color:var(--ink2)}
+h2.sec{font-size:24px;font-weight:800;letter-spacing:-.015em;margin:40px 0 14px}
+ol.probs{list-style:none;counter-reset:n;border:1px solid var(--border);border-radius:16px;overflow:hidden}
+ol.probs li{counter-increment:n;border-top:1px solid var(--border)}ol.probs li:first-child{border-top:0}
+ol.probs a{display:flex;align-items:center;gap:14px;padding:14px 18px;font-weight:600}ol.probs a:hover{background:var(--soft)}
+ol.probs a::before{content:counter(n);width:26px;height:26px;border-radius:8px;background:var(--soft);display:grid;place-items:center;font-size:13px;color:var(--muted);flex:none}
+ol.probs .t{flex:1}.d{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px}.d.E{background:#DCFCE7;color:#15803D}.d.M{background:#FEF3C7;color:#B45309}.d.H{background:#FEE2E2;color:#B91C1C}
+.steps{padding-left:20px;color:var(--ink2)}.steps li{margin:8px 0}
+.cta{margin:44px 0;padding:28px;border-radius:20px;background:var(--ink);color:#E2E8F0}.cta h2{color:#fff;font-size:22px;font-weight:800;margin-bottom:8px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:12px;font-weight:700;font-size:15px;margin:14px 10px 0 0}
+.btn-p{background:var(--grad);color:#fff}.btn-l{background:#fff;color:var(--ink);border:1px solid var(--border)}
+.pn{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0 56px}.pn a{border:1px solid var(--border);border-radius:14px;padding:14px 16px}.pn a:hover{border-color:var(--purple)}
+.pn small{display:block;color:var(--muted);font-size:13px}.pn b{font-size:15px}.pn .r{text-align:right}
+footer{border-top:1px solid var(--border);padding:26px 0;font-size:14px;color:var(--muted)}footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}footer a{margin-left:14px}
+@media(max-width:640px){.gd,.pn{grid-template-columns:1fr}.nav-in nav a:first-child{display:none}}</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Roadmap", "item": "https://algosolveo.me/roadmap.html"}, {"@type": "ListItem", "position": 2, "name": "Graph — BFS", "item": "https://algosolveo.me/patterns/graph-bfs.html"}]}, {"@type": "LearningResource", "name": "Graph — BFS pattern", "description": "Learn the Graph BFS pattern for DSA interviews: how to spot it, the key idea, and 5 LeetCode problems in order from easy to hard.", "url": "https://algosolveo.me/patterns/graph-bfs.html", "educationalLevel": "Intermediate", "learningResourceType": "Guide", "isAccessibleForFree": true, "teaches": "Graph — BFS", "hasPart": [{"@type": "CreativeWork", "name": "01 Matrix", "url": "https://leetcode.com/problems/01-matrix/"}, {"@type": "CreativeWork", "name": "Clone Graph", "url": "https://leetcode.com/problems/clone-graph/"}, {"@type": "CreativeWork", "name": "Rotting Oranges", "url": "https://leetcode.com/problems/rotting-oranges/"}, {"@type": "CreativeWork", "name": "Shortest Path in Binary Matrix", "url": "https://leetcode.com/problems/shortest-path-in-binary-matrix/"}, {"@type": "CreativeWork", "name": "Word Ladder", "url": "https://leetcode.com/problems/word-ladder/"}]}]}</script>
+</head><body>
+<header class="nav"><div class="nav-in"><a class="brand" href="/"><img src="/algosolveo-icon128.png" alt="" />AlgoSolveo</a><nav><a href="/">Home</a><a href="/roadmap.html">Roadmap</a></nav></div></header>
+<main class="wrap">
+<div class="crumb"><a href="/roadmap.html">Roadmap</a> › Stage 7: Graphs › Pattern 31 of 48</div>
+<span class="eyebrow">DSA pattern guide</span>
+<h1>Graph — BFS</h1>
+<p class="lead">Shortest path in an unweighted grid or graph, multi-source spread (rotting oranges).</p>
+<div class="meta"><span>Stage 7 · Graphs</span><span>5 problems</span><span>4 Medium · 1 Hard</span></div>
+<div class="gd"><div><h2>Use it when</h2><p>Shortest path in an unweighted grid or graph, multi-source spread (rotting oranges).</p></div><div><h2>Key idea</h2><p>Queue with a visited set. Push all sources first for multi-source. Each layer adds one to the distance.</p></div></div>
+<h2 class="sec">Practice problems, in order</h2>
+<ol class="probs"><li><a href="https://leetcode.com/problems/01-matrix/" target="_blank" rel="noopener"><span class="t">01 Matrix</span><span class="d M">Medium</span></a></li><li><a href="https://leetcode.com/problems/clone-graph/" target="_blank" rel="noopener"><span class="t">Clone Graph</span><span class="d M">Medium</span></a></li><li><a href="https://leetcode.com/problems/rotting-oranges/" target="_blank" rel="noopener"><span class="t">Rotting Oranges</span><span class="d M">Medium</span></a></li><li><a href="https://leetcode.com/problems/shortest-path-in-binary-matrix/" target="_blank" rel="noopener"><span class="t">Shortest Path in Binary Matrix</span><span class="d M">Medium</span></a></li><li><a href="https://leetcode.com/problems/word-ladder/" target="_blank" rel="noopener"><span class="t">Word Ladder</span><span class="d H">Hard</span></a></li></ol>
+<h2 class="sec">How to practise this pattern</h2>
+<ol class="steps">
+<li>Read the problem and look for the signal above before writing any code.</li>
+<li>Say the brute force out loud, with its time complexity, then ask what work it repeats.</li>
+<li>Apply the key idea and write the optimised version yourself.</li>
+<li>If you're stuck for more than 10 minutes, take one small hint, not the full solution.</li>
+<li>Move to the next problem only when you can explain why this pattern fits.</li>
+</ol>
+<div class="cta"><h2>Stuck on one of these?</h2><p>The free AlgoSolveo extension sits beside the LeetCode problem and gives the smallest hint that gets you moving, never the full answer. Solved problems tick off on your roadmap.</p>
+<a class="btn btn-p" href="https://github.com/M-k-reddy/AlgoSolveo" target="_blank" rel="noopener">Get the free extension</a><a class="btn btn-l" href="/roadmap.html#graph-bfs">Track it on the roadmap</a></div>
+<div class="pn"><a href="backtracking-sequence-gen.html"><small>← Previous pattern</small><b>Backtracking — Sequence Gen</b></a><a class="r" href="graph-dfs.html"><small>Next pattern →</small><b>Graph — DFS</b></a></div>
+</main>
+<footer><div class="wrap"><span>© 2026 AlgoSolveo</span><span><a href="/roadmap.html">Roadmap</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span></div></footer>
+</body></html>

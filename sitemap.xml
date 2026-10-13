@@ -5,4 +5,52 @@
   <url><loc>https://algosolveo.me/privacy.html</loc></url>
   <url><loc>https://algosolveo.me/terms.html</loc></url>
   <url><loc>https://algosolveo.me/refund.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/array-two-pointers.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/array-sliding-window.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/array-prefix-sum.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/array-kadanes-algorithm.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/strings-palindrome.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/strings-sliding-window.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/hashmap-frequency-prefix.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/binary-search-classic.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/binary-search-on-answers.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/stack-parenthesis.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/stack-simulation.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/stack-design.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/stack-monotonic.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/stack-expressions.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/stack-greedy.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/recursion-linear.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/recursion-divide-conquer.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/linked-list-basics-fast-slow.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/linked-list-reversal.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/linked-list-merge-sort.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/doubly-linked-list.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/tree-dfs.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/tree-bfs-level-order.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/tree-lca-construction.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/binary-search-tree.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/heap-top-k-elements.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/heap-sliding-design.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/backtracking-choice-based.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/backtracking-constraint-based.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/backtracking-sequence-gen.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/graph-bfs.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/graph-dfs.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/graph-topological-sort.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/graph-union-find-mst.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/graph-shortest-path.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/greedy-intervals.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/greedy-sorting.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/dp-1d-linear.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/dp-2d-grid.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/dp-strings.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/dp-knapsack.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/dp-stocks.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/dp-intervals.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/dp-trees-dags.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/trie-basic-word-break.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/trie-bitwise-xor.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/bit-manipulation-basics.html</loc></url>
+  <url><loc>https://algosolveo.me/patterns/bit-manipulation-subsets-xor.html</loc></url>
 </urlset>
