@@ -79,7 +79,7 @@ $("#go").onclick = () => {
   LS.set("as_mock_fmt", fmt); LS.set("as_mock_scope", scope);
   const solved = ASProgress.solvedSet();
   let pool = P.filter((p) => p.kind !== "design");
-  if (scope === "dsa") pool = pool.filter((p) => p.kind !== "stdin");
+  if (scope === "dsa") pool = pool.filter((p) => !/^Foundations/.test(p.group));
   if (scope === "studied") { const gs = new Set(P.filter((p) => solved.has(p.id)).map((p) => p.group)); const s = pool.filter((p) => gs.has(p.group)); if (s.length >= 10) pool = s; }
   const ids = [];
   for (const d of FMT[fmt].mix) {
