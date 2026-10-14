@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Guess the Pattern: DSA pattern recognition quiz · AlgoSolveo</title>
+<meta name="description" content="Read a DSA problem with the title and topic hidden and guess the pattern: two pointers, sliding window, DP, graphs and more. Train the skill interviews test. Free." />
+<link rel="canonical" href="https://algosolveo.me/pattern-quiz.html" />
+<meta property="og:title" content="Guess the Pattern: DSA pattern recognition quiz · AlgoSolveo" />
+<meta property="og:description" content="Read a DSA problem with the title and topic hidden and guess the pattern: two pointers, sliding window, DP, graphs and more. Train the skill interviews test. Free." />
+<meta property="og:url" content="https://algosolveo.me/pattern-quiz.html" />
+<meta property="og:image" content="https://algosolveo.me/og-image.png" />
+<link rel="icon" type="image/png" href="algosolveo-icon128.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" />
+<link rel="stylesheet" href="/practice/tools.css" />
+</head>
+<body>
+<header><div class="nav">
+  <a class="brand" href="/"><img src="algosolveo-icon128.png" alt="" />AlgoSolveo</a>
+  <div class="navr">
+    <a class="hide-sm" href="/">Home</a>
+    <a class="hide-sm" href="/roadmap.html">Roadmap</a>
+    <a class="on" href="/practice.html">Practice</a>
+    <a class="hide-sm" href="/courses.html">Courses</a>
+    <a href="/account.html">Dashboard</a>
+  </div>
+</div></header>
+<nav class="sub"><div class="subn"><a href="/practice.html">Console</a><a href="/revise.html">Revise</a><a href="/pattern-quiz.html" class="on">Pattern Quiz</a><a href="/mock.html">Mock Interview</a><a href="/planner.html">Study Planner</a></div></nav>
+<main>
+
+<h1>Guess the Pattern</h1>
+<p class="lead">Every other site tells you the pattern before you solve. Interviews don't. Read a problem with its title and topic hidden, pick the pattern, then see the clue that gives it away.</p>
+<div id="setup" class="card">
+  <div class="field"><label>Which topics?</label><div class="opts" id="groups"></div><small>Pick the sections you've studied. More sections make it harder.</small></div>
+  <div class="field"><label>How many questions?</label><div class="opts" id="count"></div></div>
+  <button class="btn btn-primary" id="start" type="button">Start quiz →</button>
+  <div id="best" class="m" style="margin-top:12px;color:var(--muted);font-size:13px;font-weight:600"></div>
+</div>
+<div id="quiz" style="display:none">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><span class="pill" id="qn"></span><div class="bar" style="flex:1"><i id="qbar" style="width:0"></i></div><span class="pill" id="score"></span></div>
+  <div class="two">
+    <div class="card prob-txt"><div style="margin-bottom:8px"><span class="tag" id="qdiff"></span></div><div id="qtext"></div><div id="qsample"></div></div>
+    <div><h2 style="margin-top:0">Which pattern solves it?</h2><div id="choices"></div><div id="after"></div></div>
+  </div>
+</div>
+<div id="done" style="display:none" class="card"></div>
+
+</main>
+<script src="/practice/progress.js"></script>
+<script>
+(() => {
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const LS = ASProgress.LS, DAY = ASProgress.DAY;
+const loadProbs = () => fetch("/practice/problems.json").then((r) => r.json());
+
+const COUNTS = [5, 10, 20];
+let P = [], CLUES = {}, groups = [], pick = new Set(LS.get("as_quiz_groups", [])), count = LS.get("as_quiz_count", 10);
+let Q = [], qi = 0, right = 0, misses = {};
+const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+Promise.all([loadProbs(), fetch("/practice/learn/index.json").then((r) => r.ok ? r.json() : {}).catch(() => ({}))]).then(([p, c]) => {
+  P = p; CLUES = c;
+  groups = [...new Set(P.map((x) => x.group))];
+  if (!pick.size) groups.slice(0, 2).forEach((g) => pick.add(g));
+  drawSetup();
+});
+function drawSetup() {
+  $("#groups").innerHTML = groups.map((g) => `<button type="button" class="opt ${pick.has(g) ? "on" : ""}" data-g="${esc(g)}">${esc(g)}</button>`).join("");
+  $("#groups").querySelectorAll(".opt").forEach((b) => b.onclick = () => { pick.has(b.dataset.g) ? pick.delete(b.dataset.g) : pick.add(b.dataset.g); drawSetup(); });
+  $("#count").innerHTML = COUNTS.map((n) => `<button type="button" class="opt ${n === count ? "on" : ""}" data-n="${n}">${n}</button>`).join("");
+  $("#count").querySelectorAll(".opt").forEach((b) => b.onclick = () => { count = +b.dataset.n; drawSetup(); });
+  const st = LS.get("as_quiz_stats", { played: 0, best: 0 });
+  $("#best").textContent = st.played ? `Played ${st.played} quiz${st.played > 1 ? "zes" : ""} · best score ${st.best}%` : "";
+  $("#start").disabled = !pick.size;
+}
+$("#start").onclick = () => {
+  LS.set("as_quiz_groups", [...pick]); LS.set("as_quiz_count", count);
+  const pool = P.filter((p) => pick.has(p.group));
+  const stages = [...new Set(pool.map((p) => p.stage))];
+  if (stages.length < 2) { alert("Pick sections with at least two different patterns."); return; }
+  Q = shuffle(pool.slice()).slice(0, count); qi = 0; right = 0; misses = {};
+  $("#setup").style.display = "none"; $("#done").style.display = "none"; $("#quiz").style.display = "";
+  ask();
+};
+function options(p) {
+  const pool = P.filter((x) => pick.has(x.group));
+  const same = shuffle([...new Set(pool.filter((x) => x.group === p.group && x.stage !== p.stage).map((x) => x.stage))]);
+  const other = shuffle([...new Set(pool.filter((x) => x.stage !== p.stage).map((x) => x.stage))]);
+  const opts = [p.stage];
+  for (const s of [...same, ...other]) { if (opts.length >= 4) break; if (!opts.includes(s)) opts.push(s); }
+  return shuffle(opts);
+}
+function showIn(p, inp) {
+  if (p.kind === "stdin") return inp.trimEnd();
+  const L = inp.split("\n").filter((x) => x.trim());
+  if (p.kind === "design") return `calls = ${L[0] || ""}\nargs  = ${L[1] || ""}`;
+  return p.params.map(([a], k) => `${a} = ${L[k]}`).join("\n");
+}
+function ask() {
+  const p = Q[qi];
+  $("#qn").textContent = `Question ${qi + 1} of ${Q.length}`;
+  $("#score").textContent = `${right} correct`;
+  $("#qbar").style.width = (qi / Q.length) * 100 + "%";
+  $("#qdiff").className = "tag " + p.diff; $("#qdiff").textContent = p.diff;
+  $("#qtext").innerHTML = p.statement;
+  const s = p.samples[0];
+  $("#qsample").innerHTML = `<h2 style="font-size:15px;margin:14px 0 6px">Example</h2><pre style="font-family:var(--mono);font-size:13px;background:var(--soft);border:1px solid var(--border);border-radius:10px;padding:10px;white-space:pre-wrap;word-break:break-all">${esc(showIn(p, s.in))}\n→ ${esc(s.out)}</pre>`;
+  $("#choices").innerHTML = options(p).map((o) => `<button type="button" class="choice" data-o="${esc(o)}">${esc(o)}</button>`).join("");
+  $("#after").innerHTML = "";
+  $("#choices").querySelectorAll(".choice").forEach((b) => b.onclick = () => answer(p, b));
+}
+function answer(p, b) {
+  const ok = b.dataset.o === p.stage;
+  if (ok) right++; else misses[p.stage] = (misses[p.stage] || 0) + 1;
+  $("#choices").querySelectorAll(".choice").forEach((x) => { x.disabled = true; if (x.dataset.o === p.stage) x.classList.add("right"); else if (x === b) x.classList.add("wrong"); });
+  const ws = LS.get("as_quiz_weak", {}); ws[p.stage] = ws[p.stage] || [0, 0]; ws[p.stage][0] += ok ? 1 : 0; ws[p.stage][1]++; LS.set("as_quiz_weak", ws);
+  const clue = CLUES[p.id] || p.hint;
+  $("#score").textContent = `${right} correct`;
+  $("#after").innerHTML = `<p style="font-weight:800;margin:6px 0;color:${ok ? "var(--green)" : "var(--red)"}">${ok ? "Correct!" : "Not quite. It's " + esc(p.stage) + "."}</p><div class="clue"><b>The giveaway:</b> ${clue}</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-primary" id="nextq" type="button">${qi + 1 < Q.length ? "Next question →" : "See results"}</button><a class="btn btn-line" href="/practice.html?p=${p.id}" target="_blank" rel="noopener">Solve it in the console ↗</a></div>`;
+  $("#nextq").onclick = () => { qi++; qi < Q.length ? ask() : finish(); };
+}
+function finish() {
+  const pct = Math.round((right / Q.length) * 100);
+  const st = LS.get("as_quiz_stats", { played: 0, best: 0 }); st.played++; st.best = Math.max(st.best, pct); LS.set("as_quiz_stats", st);
+  const ws = LS.get("as_quiz_weak", {});
+  const weak = Object.entries(ws).filter(([, [r, n]]) => n >= 2 && r / n < 0.6).sort((a, b) => a[1][0] / a[1][1] - b[1][0] / b[1][1]).slice(0, 5);
+  const pid = (stage) => (P.find((x) => x.stage === stage) || {}).pattern;
+  $("#quiz").style.display = "none";
+  $("#done").style.display = "";
+  $("#done").innerHTML = `<h2 style="margin-top:0">You spotted ${right} of ${Q.length} patterns</h2><div style="font-size:44px;font-weight:800">${pct}%</div>
+    <p class="lead" style="margin:6px 0 14px">${pct >= 80 ? "Interview-ready pattern sense. Try adding more sections." : pct >= 50 ? "Solid start. The clues you missed are the ones to drill." : "Pattern recognition takes reps. Review the patterns below, then try again."}</p>
+    ${weak.length ? `<h2>Patterns you mix up most</h2><div class="list">${weak.map(([s, [r, n]]) => `<a class="row" href="/patterns/${pid(s)}.html"><span class="t">${esc(s)}</span><span class="sp"></span><span class="m">${r}/${n} right overall</span><span class="pill">Review →</span></a>`).join("")}</div>` : ""}
+    <div style="display:flex;gap:10px;margin-top:16px"><button class="btn btn-primary" id="again" type="button">Play again</button><button class="btn btn-line" id="change" type="button">Change topics</button></div>`;
+  $("#again").onclick = () => $("#start").onclick();
+  $("#change").onclick = () => { $("#done").style.display = "none"; $("#setup").style.display = ""; drawSetup(); };
+}
+
+})();
+</script>
+</body>
+</html>
