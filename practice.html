@@ -57,6 +57,8 @@ header{background:#fff;border-bottom:1px solid var(--border);flex:none}
 .prob p{line-height:1.65;color:var(--ink-2);margin-bottom:10px;font-size:15px}
 .prob h3{font-size:14px;font-weight:800;margin:18px 0 6px}
 .prob code{font-family:var(--mono);font-size:13px;background:#F1F5F9;padding:1px 6px;border-radius:5px}
+.dsub{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:8px 12px 2px}
+.sig{font-family:var(--mono);font-size:13px;background:var(--soft);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin:6px 0 10px;overflow-x:auto;white-space:pre}
 .sample{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .sample div{background:var(--soft);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
 .sample b{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
@@ -178,6 +180,7 @@ details.hint p{margin:8px 0 0}
 
 <script src="/practice/cm/cm.js"></script>
 <script src="/practice/guard.js"></script>
+<script src="/practice/wrap.js"></script>
 <script>
 (() => {
 const $ = (s) => document.querySelector(s);
@@ -286,10 +289,10 @@ const JavaEngine = {
     this.ready.catch(() => { this.ready = null; });
     return this.ready;
   },
-  async runAll(code, inputs) {
+  async runAll(code, inputs, forceCls) {
     await this.start();
     const m = code.match(/public\s+(?:final\s+)?class\s+([A-Za-z_$][\w$]*)/);
-    const cls = m ? m[1] : "Main";
+    const cls = forceCls || (m ? m[1] : "Main");
     const c = await this.R.compile("/files/as", cls, guardJava(code));
     if (c.startsWith("CE:")) return { ce: c.slice(3) };
     const dir = c.slice(3);
@@ -310,15 +313,52 @@ function warm(l) {
 /* ---------------- problems ---------------- */
 function norm(s) { return String(s).replace(/\r/g, "").split("\n").map((l) => l.replace(/\s+$/, "")).join("\n").replace(/\n+$/, ""); }
 
+const isFn = (p) => p.kind === "fn" || p.kind === "design";
+const starterFor = (p, l) => (isFn(p) ? ASWrap.starter(l, p) : STARTER[l]);
+function showIn(p, input) {
+  if (!isFn(p)) return input.trimEnd();
+  const L = input.split("\n").filter((x) => x.trim());
+  if (p.kind === "design") return `calls = ${L[0] || ""}\nargs  = ${L[1] || ""}`;
+  return p.params.map(([a], k) => `${a} = ${L[k] === undefined ? "?" : L[k]}`).join("\n");
+}
+function fnInfo(p) {
+  const types = JSON.stringify([p.params, p.methods, p.ret]);
+  let notes = [];
+  if (types.includes("TreeNode")) notes.push("Trees are written in level order, with <code>null</code> for a missing child: <code>[3,9,20,null,null,15,7]</code>.");
+  if (types.includes("ListNode")) notes.push("Linked lists are written as arrays: <code>[1,2,3]</code> is 1 → 2 → 3.");
+  if (p.kind === "design") {
+    notes.push("The first line lists the calls (the first one creates the object), the second line their arguments. The output lists what each call returned, with <code>null</code> for calls that return nothing.");
+    return `<h3>What to implement</h3><div class="sig">class ${esc(p.cls)}\n${p.methods.slice(1).map(([n, ps, r]) => `  ${n}(${ps.map((x) => x[0]).join(", ")})`).join("\n")}</div><p>${notes.join(" ")}</p>`;
+  }
+  const ord = p.compare === "sorted" || p.compare === "sorted2" ? " The order of the returned items doesn't matter." : "";
+  const inplace = p.ret === "void" ? ` Modify <code>${esc(p.params[p.out][0])}</code> in place; return nothing.` : "";
+  return `<h3>What to implement</h3><div class="sig">${esc(p.fn)}(${p.params.map((x) => x[0]).join(", ")})</div><p>Write the function in the editor. We call it with each test's arguments and check what it returns.${inplace}${ord} You can print to debug; printed text is shown separately. ${notes.join(" ")}</p>`;
+}
+const TESTS = {};
+async function getTests(p) {
+  if (p.tests) return p.tests;
+  if (!TESTS[p.id]) TESTS[p.id] = fetch(`/practice/p/${p.id}.json`).then((r) => { if (!r.ok) throw new Error("Could not load the tests. Check your connection."); return r.json(); }).then((d) => d.tests);
+  try { return await TESTS[p.id]; } catch (e) { delete TESTS[p.id]; throw e; }
+}
+// Turn a raw engine result into {s, o, e, t, val} for function-style problems.
+function fnResult(p, r, l) {
+  const x = ASWrap.extract(r.o);
+  let e = r.e || "";
+  if (l === "python") e = e.replace(/File "solution\.py", line (\d+)/g, (m, n) => `File "solution.py", line ${Math.max(1, n - 1)}`);
+  if (r.s === "OK" && x.result === null) return { ...r, s: "RE", o: x.stdout, e: e || "Your code finished without returning a value." };
+  return { ...r, o: x.stdout, e, val: x.result };
+}
+
 function renderList() {
   const groups = {};
-  PROBS.forEach((p, i) => (groups[p.stage] = groups[p.stage] || []).push([p, i]));
-  $("#dlist").innerHTML = Object.entries(groups).map(([st, arr]) => `<div class="dst">${esc(st)}</div>` + arr.map(([p, i]) =>
-    `<button class="ditem ${solved.has(p.id) ? "done" : ""} ${i === cur ? "cur" : ""}" data-i="${i}" type="button"><span class="ck">${solved.has(p.id) ? "✓" : ""}</span>${esc(p.title)}<span class="d ${p.diff}">${p.diff}</span></button>`).join("")).join("");
+  PROBS.forEach((p, i) => { const g = (groups[p.group || "Foundations (Start Here)"] = groups[p.group || "Foundations (Start Here)"] || {}); (g[p.stage] = g[p.stage] || []).push([p, i]); });
+  $("#dlist").innerHTML = Object.entries(groups).map(([grp, pats]) => `<div class="dst">${esc(grp)}</div>` + Object.entries(pats).map(([st, arr]) => `<div class="dsub">${esc(st)}</div>` + arr.map(([p, i]) =>
+    `<button class="ditem ${solved.has(p.id) ? "done" : ""} ${i === cur ? "cur" : ""}" data-i="${i}" type="button"><span class="ck">${solved.has(p.id) ? "✓" : ""}</span>${esc(p.title)}<span class="d ${p.diff}">${p.diff}</span></button>`).join("")).join("")).join("");
   $("#dlist").querySelectorAll(".ditem").forEach((b) => b.onclick = () => { load(+b.dataset.i); $("#drawer").classList.remove("open"); });
   const n = PROBS.filter((p) => solved.has(p.id)).length;
   $("#solved-count").textContent = `${n}/${PROBS.length}`;
-  $("#d-sub").textContent = `${n} of ${PROBS.length} solved · Foundations stage`;
+  $("#d-sub").textContent = `${n} of ${PROBS.length} solved`;
+  const cb = $("#dlist .ditem.cur"); if (cb) cb.scrollIntoView({ block: "nearest" });
 }
 
 function load(i) {
@@ -330,13 +370,14 @@ function load(i) {
     <h1>${cur + 1}. ${esc(p.title)} <span class="tag ${p.diff}">${p.diff}</span>${solved.has(p.id) ? '<span class="tag solved-tag">✓ Solved</span>' : ""}</h1>
     <div class="meta">${esc(p.stage)} · <a href="/patterns/${p.pattern}.html">Learn this pattern →</a></div>
     ${p.statement}
-    <h3>Input</h3><p>${p.input}</p>
-    <h3>Output</h3><p>${p.output}</p>
+    ${isFn(p) ? fnInfo(p) : `<h3>Input</h3><p>${p.input}</p>
+    <h3>Output</h3><p>${p.output}</p>`}
     <h3>Constraints</h3><p>${p.constraints}</p>
-    ${p.samples.map((s, k) => `<h3>Example ${k + 1}</h3><div class="sample"><div><b>Input</b><pre>${esc(s.in.trimEnd())}</pre></div><div><b>Output</b><pre>${esc(s.out)}</pre></div></div>`).join("")}
+    ${p.samples.map((s, k) => `<h3>Example ${k + 1}</h3><div class="sample"><div><b>Input</b><pre>${esc(showIn(p, s.in))}</pre></div><div><b>Output</b><pre>${esc(s.out)}</pre></div></div>`).join("")}
     <details class="hint"><summary>💡 Stuck? Show a hint</summary><p>${p.hint}</p></details>`;
-  cm.setValue(LS.get(`as_code_${p.id}_${lang}`, STARTER[lang]));
+  cm.setValue(LS.get(`as_code_${p.id}_${lang}`, starterFor(p, lang)));
   cm.clearHistory();
+  $("#custom").placeholder = isFn(p) ? "One JSON value per line, in parameter order. Leave as the sample, or type your own." : "Input for Run. Leave as the sample, or type your own.";
   $("#custom").value = p.samples[0].in;
   $("#p-result").innerHTML = '<p class="empty">Run your code to see the output here.</p>';
   tab("input");
@@ -364,10 +405,14 @@ async function run(isSubmit) {
   if (!engReady) setEng("load", `Loading ${LABEL[l]}…`);
   try {
     const custom = !isSubmit;
-    const inputs = isSubmit ? p.tests.map((t) => t.in) : [$("#custom").value];
-    const r = await eng.runAll(code, inputs);
+    const tests = isSubmit ? await getTests(p) : null;
+    const inputs = isSubmit ? tests.map((t) => t.in) : [$("#custom").value];
+    const prog = isFn(p) ? ASWrap.program(l, p, code) : code;
+    const r = await eng.runAll(prog, inputs, isFn(p) && l === "java" ? "Main" : undefined);
     setEng("ok", `${LABEL[l]} ready`);
     if (r.ce !== undefined) { showCE(r.ce); return; }
+    if (isFn(p)) r.results = r.results.map((x) => fnResult(p, x, l));
+    p._tests = tests;
     if (custom) showRun(r.results[0], inputs[0], p);
     else showSubmit(r.results, p);
   } catch (err) {
@@ -387,15 +432,17 @@ function showRun(res, input, p) {
   if (res.s === "TLE") head = `<div class="verdict v-warn">Time Limit Exceeded</div><div class="vsub">Your code ran longer than ${TIME_LIMIT / 1000}s. Check for an infinite loop.</div>`;
   else if (res.s === "RE") head = `<div class="verdict v-bad">Runtime Error</div><div class="vsub">${res.t} ms</div>`;
   else if (sample) {
-    const ok = norm(res.o) === norm(sample.out);
+    const ok = isFn(p) ? ASWrap.check(p, res.val, sample.out) : norm(res.o) === norm(sample.out);
     head = ok ? `<div class="verdict v-ok">Matches the expected output</div><div class="vsub">${res.t} ms · Now press Submit to run all hidden tests.</div>`
               : `<div class="verdict v-bad">Wrong Answer</div><div class="vsub">${res.t} ms · Your output differs from the expected output.</div>`;
   } else head = `<div class="verdict">Finished</div><div class="vsub">${res.t} ms · Custom input, so there is no expected output to compare.</div>`;
+  if (isFn(p)) { $("#p-result").innerHTML = head + `<div class="io"><b>Input</b><pre>${esc(showIn(p, input)) || "(empty)"}</pre><b>Your answer</b><pre>${esc(res.val == null ? "(no value)" : res.val)}</pre>${sample ? `<b>Expected</b><pre>${esc(sample.out)}</pre>` : ""}${res.o ? `<b>Printed</b><pre>${esc(res.o)}</pre>` : ""}${res.e ? `<b>Error</b><pre class="err">${esc(res.e)}</pre>` : ""}</div>`; return; }
   $("#p-result").innerHTML = head + `<div class="io"><b>Input</b><pre>${esc(input.trimEnd()) || "(empty)"}</pre><b>Your output</b><pre>${esc(res.o) || "(nothing printed)"}</pre>${sample ? `<b>Expected</b><pre>${esc(sample.out)}</pre>` : ""}${res.e ? `<b>Error</b><pre class="err">${esc(res.e)}</pre>` : ""}</div>`;
 }
 
 function showSubmit(results, p) {
-  const verdicts = results.map((r, i) => r.s === "OK" ? (norm(r.o) === norm(p.tests[i].out) ? "AC" : "WA") : r.s);
+  const T = p._tests;
+  const verdicts = results.map((r, i) => r.s === "OK" ? ((isFn(p) ? ASWrap.check(p, r.val, T[i].out) : norm(r.o) === norm(T[i].out)) ? "AC" : "WA") : r.s);
   const pass = verdicts.filter((v) => v === "AC").length, total = verdicts.length;
   const firstBad = verdicts.findIndex((v) => v !== "AC");
   const maxT = Math.max(...results.map((r) => r.t || 0));
@@ -412,9 +459,11 @@ function showSubmit(results, p) {
   const chips = verdicts.map((v, i) => `<span class="tc ${v === "AC" ? "p" : "f"}" title="${v}">${i < nSample ? "Ex " : "T"}${i + 1}</span>`).join("");
   let detail = "";
   if (firstBad !== -1) {
-    const t = p.tests[firstBad], r = results[firstBad];
+    const t = T[firstBad], r = results[firstBad];
     const clip = (s) => (s.length > 1200 ? s.slice(0, 1200) + "\n…" : s);
-    detail = `<div class="io"><b>Input</b><pre>${esc(clip(t.in.trimEnd()))}</pre><b>Your output</b><pre>${esc(clip(r.o)) || "(nothing printed)"}</pre><b>Expected</b><pre>${esc(clip(t.out))}</pre>${r.e ? `<b>Error</b><pre class="err">${esc(r.e)}</pre>` : ""}</div>`;
+    detail = isFn(p)
+      ? `<div class="io"><b>Input</b><pre>${esc(clip(showIn(p, t.in)))}</pre><b>Your answer</b><pre>${esc(clip(r.val == null ? "(no value)" : r.val))}</pre><b>Expected</b><pre>${esc(clip(t.out))}</pre>${r.o ? `<b>Printed</b><pre>${esc(clip(r.o))}</pre>` : ""}${r.e ? `<b>Error</b><pre class="err">${esc(r.e)}</pre>` : ""}</div>`
+      : `<div class="io"><b>Input</b><pre>${esc(clip(t.in.trimEnd()))}</pre><b>Your output</b><pre>${esc(clip(r.o)) || "(nothing printed)"}</pre><b>Expected</b><pre>${esc(clip(t.out))}</pre>${r.e ? `<b>Error</b><pre class="err">${esc(r.e)}</pre>` : ""}</div>`;
   }
   $("#p-result").innerHTML = head + `<div class="tc-row">${chips}</div>` + detail + (firstBad === -1 && cur < PROBS.length - 1 ? `<button class="btn btn-primary" id="go-next" type="button">Next problem →</button>` : "");
   const gn = $("#go-next"); if (gn) gn.onclick = () => load(cur + 1);
@@ -423,7 +472,7 @@ function showSubmit(results, p) {
 /* ---------------- wiring ---------------- */
 $("#run").onclick = () => run(false);
 $("#submit").onclick = () => run(true);
-$("#reset").onclick = () => { if (confirm("Replace your code with the starter template?")) { cm.setValue(STARTER[lang]); } };
+$("#reset").onclick = () => { if (confirm("Replace your code with the starter template?")) { cm.setValue(starterFor(PROBS[cur], lang)); } };
 $("#prev").onclick = () => load(cur - 1);
 $("#next").onclick = () => load(cur + 1);
 $("#open-list").onclick = () => $("#drawer").classList.add("open");
@@ -432,7 +481,7 @@ $("#drawer").onclick = (e) => { if (e.target.id === "drawer") $("#drawer").class
 $("#lang").onchange = (e) => {
   lang = e.target.value; LS.set("as_lang", lang);
   cm.setOption("mode", MODES[lang]);
-  cm.setValue(LS.get(`as_code_${PROBS[cur].id}_${lang}`, STARTER[lang]));
+  cm.setValue(LS.get(`as_code_${PROBS[cur].id}_${lang}`, starterFor(PROBS[cur], lang)));
   warm(lang);
 };
 document.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && !cm.hasFocus()) { e.preventDefault(); run(false); } });
