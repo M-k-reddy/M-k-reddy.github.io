@@ -73,9 +73,9 @@ const dparse = (k) => { const [y, m, d] = k.split("-").map(Number); return new D
 function build() {
   const weeks = +sel.value, dpw = +$("#days").value, hours = +$("#hours").value;
   let pool = P.slice();
-  if (level === "dsa") pool = pool.filter((p) => p.kind !== "stdin");
-  if (level === "basics") { let k = 0; pool = pool.filter((p) => p.kind !== "stdin" || p.diff !== "Easy" || k++ % 2 === 0); }
-  if (target === "service") pool = pool.filter((p) => p.diff !== "Hard" && !/Graphs|Tries|Heaps/.test(p.group) || p.kind === "stdin");
+  if (level === "dsa") pool = pool.filter((p) => !/^Foundations/.test(p.group));
+  if (level === "basics") { let k = 0; pool = pool.filter((p) => !/^Foundations/.test(p.group) || p.diff !== "Easy" || k++ % 2 === 0); }
+  if (target === "service") pool = pool.filter((p) => p.diff !== "Hard" && !/Graphs|Tries|Heaps/.test(p.group) || /^Foundations/.test(p.group));
   const per = { 1: 2, 2: 3, 3: 5, 4: 7 }[hours];
   const studyDays = weeks * dpw;
   const revDays = Math.floor(studyDays / 7); // roughly one revision day per 7 study days
