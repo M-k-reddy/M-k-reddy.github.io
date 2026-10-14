@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Smart Revision: spaced repetition for DSA · AlgoSolveo</title>
+<meta name="description" content="Revise DSA problems right before you forget them. Solved problems come back after 3, 7, 21 and 60 days. Free." />
+<link rel="canonical" href="https://algosolveo.me/revise.html" />
+<meta property="og:title" content="Smart Revision: spaced repetition for DSA · AlgoSolveo" />
+<meta property="og:description" content="Revise DSA problems right before you forget them. Solved problems come back after 3, 7, 21 and 60 days. Free." />
+<meta property="og:url" content="https://algosolveo.me/revise.html" />
+<meta property="og:image" content="https://algosolveo.me/og-image.png" />
+<link rel="icon" type="image/png" href="algosolveo-icon128.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" />
+<link rel="stylesheet" href="/practice/tools.css" />
+</head>
+<body>
+<header><div class="nav">
+  <a class="brand" href="/"><img src="algosolveo-icon128.png" alt="" />AlgoSolveo</a>
+  <div class="navr">
+    <a class="hide-sm" href="/">Home</a>
+    <a class="hide-sm" href="/roadmap.html">Roadmap</a>
+    <a class="on" href="/practice.html">Practice</a>
+    <a class="hide-sm" href="/courses.html">Courses</a>
+    <a href="/account.html">Dashboard</a>
+  </div>
+</div></header>
+<nav class="sub"><div class="subn"><a href="/practice.html">Console</a><a href="/revise.html" class="on">Revise</a><a href="/pattern-quiz.html">Pattern Quiz</a><a href="/mock.html">Mock Interview</a><a href="/planner.html">Study Planner</a></div></nav>
+<main>
+
+<h1>Smart Revision</h1>
+<p class="lead">Solved problems come back after 3, 7, 21 and 60 days, right before you'd forget them. Re-solve each one from scratch in the console. If you needed the solution, it comes back the next day.</p>
+<div class="grid" id="stats"></div>
+<h2 id="due-h">Due today</h2>
+<div class="list" id="due"></div>
+<h2>Coming up this week</h2>
+<div class="list" id="soon"></div>
+<h2>How it works</h2>
+<div class="card"><p style="line-height:1.7;color:var(--ink-2)">Every time you get <b>Accepted</b>, the problem moves one step along the 3 → 7 → 21 → 60 day ladder. Solve it again when it's due and it moves up. Used the solution? It drops back to 1 day. Progress is saved in this browser.</p></div>
+
+</main>
+<script src="/practice/progress.js"></script>
+<script>
+(() => {
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const LS = ASProgress.LS, DAY = ASProgress.DAY;
+const loadProbs = () => fetch("/practice/problems.json").then((r) => r.json());
+
+loadProbs().then((P) => {
+  const byId = Object.fromEntries(P.map((p) => [p.id, p]));
+  const h = ASProgress.history();
+  const due = ASProgress.due().filter((id) => byId[id]);
+  const soon = ASProgress.upcoming(7).filter((id) => byId[id]);
+  const total = Object.keys(h).length;
+  const mastered = Object.values(h).filter((e) => e.step >= 3).length;
+  $("#stats").innerHTML = [[due.length, "due today"], [total, "problems in your revision deck"], [mastered, "mastered (reached the 60-day step)"], [ASProgress.streak() + " 🔥", "day solving streak"]]
+    .map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+  const when = (t) => { const d = Math.ceil((t - Date.now()) / DAY); return d <= 1 ? "tomorrow" : `in ${d} days`; };
+  const row = (id, extra) => { const p = byId[id], e = h[id]; return `<a class="row" href="/practice.html?p=${id}"><span class="ck ${e.help ? "" : "done"}">${e.help ? "" : "✓"}</span><span><span class="t">${esc(p.title)}</span><br><span class="m">${esc(p.stage)} · step ${e.step + 1} of 4${e.help ? " · used the solution last time" : ""}</span></span><span class="sp"></span><span class="tag ${p.diff}">${p.diff}</span>${extra(e)}</a>`; };
+  $("#due").innerHTML = due.length ? due.map((id) => row(id, () => '<span class="btn btn-primary" style="padding:7px 12px">Revise →</span>')).join("")
+    : `<p class="empty">${total ? "Nothing due. Nice work. Solve something new in the <a href='/practice.html' style='color:var(--purple-d);font-weight:700'>console</a>." : "Your deck is empty. Every problem you solve in the <a href='/practice.html' style='color:var(--purple-d);font-weight:700'>console</a> lands here automatically."}</p>`;
+  $("#soon").innerHTML = soon.length ? soon.map((id) => row(id, (e) => `<span class="m" style="min-width:90px;text-align:right">${when(e.due)}</span>`)).join("") : '<p class="empty">Nothing else this week.</p>';
+});
+
+})();
+</script>
+</body>
+</html>
