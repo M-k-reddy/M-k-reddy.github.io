@@ -360,6 +360,8 @@ function norm(s) { return String(s).replace(/\r/g, "").split("\n").map((l) => l.
 
 const isFn = (p) => p.kind === "fn" || p.kind === "design";
 const starterFor = (p, l) => (isFn(p) ? ASWrap.starter(l, p) : STARTER[l]);
+// saved code from before a problem switched to function style (full stdin program) is ignored
+const savedCode = (p, l) => { const c = LS.get(`as_code_${p.id}_${l}`, null); if (c && isFn(p) && /static void main|sys\.stdin|readline\(|\binput\.trim\(\)/.test(c)) return starterFor(p, l); return c || starterFor(p, l); };
 function showIn(p, input) {
   if (!isFn(p)) return input.trimEnd();
   const L = input.split("\n").filter((x) => x.trim());
@@ -423,7 +425,7 @@ function load(i) {
   const th = $("#to-hints"); if (th) th.onclick = (e) => { e.preventDefault(); ltab("hints"); };
   ltab("prob");
   document.querySelectorAll(".ltab").forEach((b) => { if (b.dataset.l !== "prob") b.disabled = !!MOCK; });
-  cm.setValue(LS.get(`as_code_${p.id}_${lang}`, starterFor(p, lang)));
+  cm.setValue(savedCode(p, lang));
   cm.clearHistory();
   $("#custom").placeholder = isFn(p) ? "One JSON value per line, in parameter order. Leave as the sample, or type your own." : "Input for Run. Leave as the sample, or type your own.";
   $("#custom").value = p.samples[0].in;
@@ -646,7 +648,7 @@ $("#drawer").onclick = (e) => { if (e.target.id === "drawer") $("#drawer").class
 $("#lang").onchange = (e) => {
   lang = e.target.value; LS.set("as_lang", lang);
   cm.setOption("mode", MODES[lang]);
-  cm.setValue(LS.get(`as_code_${PROBS[cur].id}_${lang}`, starterFor(PROBS[cur], lang)));
+  cm.setValue(savedCode(PROBS[cur], lang));
   warm(lang);
 };
 document.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && !cm.hasFocus()) { e.preventDefault(); run(false); } });
