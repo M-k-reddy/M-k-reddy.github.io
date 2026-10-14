@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mock Coding Interview: timed DSA practice · AlgoSolveo</title>
+<meta name="description" content="Free timed mock coding interviews in Java, Python or JavaScript. Hidden topics, no hints, a real score. Service-company and product-company formats." />
+<link rel="canonical" href="https://algosolveo.me/mock.html" />
+<meta property="og:title" content="Mock Coding Interview: timed DSA practice · AlgoSolveo" />
+<meta property="og:description" content="Free timed mock coding interviews in Java, Python or JavaScript. Hidden topics, no hints, a real score. Service-company and product-company formats." />
+<meta property="og:url" content="https://algosolveo.me/mock.html" />
+<meta property="og:image" content="https://algosolveo.me/og-image.png" />
+<link rel="icon" type="image/png" href="algosolveo-icon128.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" />
+<link rel="stylesheet" href="/practice/tools.css" />
+</head>
+<body>
+<header><div class="nav">
+  <a class="brand" href="/"><img src="algosolveo-icon128.png" alt="" />AlgoSolveo</a>
+  <div class="navr">
+    <a class="hide-sm" href="/">Home</a>
+    <a class="hide-sm" href="/roadmap.html">Roadmap</a>
+    <a class="on" href="/practice.html">Practice</a>
+    <a class="hide-sm" href="/courses.html">Courses</a>
+    <a href="/account.html">Dashboard</a>
+  </div>
+</div></header>
+<nav class="sub"><div class="subn"><a href="/practice.html">Console</a><a href="/revise.html">Revise</a><a href="/pattern-quiz.html">Pattern Quiz</a><a href="/mock.html" class="on">Mock Interview</a><a href="/planner.html">Study Planner</a></div></nav>
+<main>
+
+<h1>Mock Interview</h1>
+<p class="lead">A timed round like a real coding interview. Titles and topics are hidden, hints are off, and you get a score at the end. Pick a format and go.</p>
+<div class="two">
+<div class="card">
+  <div class="field"><label>Format</label><div class="opts" id="fmt"></div><small id="fmt-d"></small></div>
+  <div class="field"><label>Topics</label><div class="opts" id="scope"></div><small>"Only what I've studied" uses sections where you've solved at least one problem.</small></div>
+  <div class="field"><label><input type="checkbox" id="fresh" checked /> Prefer problems I haven't solved yet</label></div>
+  <button class="btn btn-primary" id="go" type="button">Start interview →</button>
+</div>
+<div><h2 style="margin-top:0">Past interviews</h2><div class="list" id="hist"></div></div>
+</div>
+
+</main>
+<script src="/practice/progress.js"></script>
+<script>
+(() => {
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const LS = ASProgress.LS, DAY = ASProgress.DAY;
+const loadProbs = () => fetch("/practice/problems.json").then((r) => r.json());
+
+const FMT = {
+  service: { name: "Service company · 45 min", d: "2 Easy problems. Like TCS, Infosys, Wipro and Accenture coding rounds.", dur: 45, mix: ["Easy", "Easy"] },
+  standard: { name: "Product round · 60 min", d: "1 Easy + 1 Medium. A typical first technical round.", dur: 60, mix: ["Easy", "Medium"] },
+  faang: { name: "Big tech · 75 min", d: "2 Medium problems. Close to an Amazon or Microsoft onsite round.", dur: 75, mix: ["Medium", "Medium"] },
+  hard: { name: "Stretch · 90 min", d: "1 Medium + 1 Hard. For when you want a real challenge.", dur: 90, mix: ["Medium", "Hard"] },
+};
+let fmt = LS.get("as_mock_fmt", "standard"), scope = LS.get("as_mock_scope", "studied"), P = [];
+const SCOPES = { studied: "Only what I've studied", all: "Everything", dsa: "Skip Foundations" };
+function draw() {
+  $("#fmt").innerHTML = Object.entries(FMT).map(([k, f]) => `<button type="button" class="opt ${k === fmt ? "on" : ""}" data-k="${k}">${f.name}</button>`).join("");
+  $("#fmt-d").textContent = FMT[fmt].d;
+  $("#fmt").querySelectorAll(".opt").forEach((b) => b.onclick = () => { fmt = b.dataset.k; draw(); });
+  $("#scope").innerHTML = Object.entries(SCOPES).map(([k, n]) => `<button type="button" class="opt ${k === scope ? "on" : ""}" data-k="${k}">${n}</button>`).join("");
+  $("#scope").querySelectorAll(".opt").forEach((b) => b.onclick = () => { scope = b.dataset.k; draw(); });
+}
+draw();
+loadProbs().then((p) => {
+  P = p;
+  const h = LS.get("as_mock_hist", []), byId = Object.fromEntries(P.map((x) => [x.id, x]));
+  $("#hist").innerHTML = h.length ? h.map((m) => `<div class="row"><span><span class="t">${m.pct}/100</span><br><span class="m">${new Date(m.t).toLocaleDateString("en-IN", { day: "numeric", month: "short" })} · ${m.ids.map((id) => esc((byId[id] || {}).title || id)).join(", ")}</span></span></div>`).join("") : '<p class="empty">No interviews yet. Your scores will show up here.</p>';
+});
+$("#go").onclick = () => {
+  if (!P.length) return;
+  const cur = LS.get("as_mock", null);
+  if (cur && !cur.ended && Date.now() < cur.start + cur.dur && !confirm("You have an interview in progress. Abandon it and start a new one?")) { location.href = "/practice.html?mock=1"; return; }
+  LS.set("as_mock_fmt", fmt); LS.set("as_mock_scope", scope);
+  const solved = ASProgress.solvedSet();
+  let pool = P.filter((p) => p.kind !== "design");
+  if (scope === "dsa") pool = pool.filter((p) => p.kind !== "stdin");
+  if (scope === "studied") { const gs = new Set(P.filter((p) => solved.has(p.id)).map((p) => p.group)); const s = pool.filter((p) => gs.has(p.group)); if (s.length >= 10) pool = s; }
+  const ids = [];
+  for (const d of FMT[fmt].mix) {
+    let c = pool.filter((p) => p.diff === d && !ids.includes(p.id));
+    if ($("#fresh").checked) { const f = c.filter((p) => !solved.has(p.id)); if (f.length) c = f; }
+    if (!c.length) c = P.filter((p) => p.diff === d && p.kind !== "design" && !ids.includes(p.id));
+    ids.push(c[Math.floor(Math.random() * c.length)].id);
+  }
+  LS.set("as_mock", { ids, start: Date.now(), dur: FMT[fmt].dur * 60000, res: {}, fmt });
+  location.href = "/practice.html?mock=1";
+};
+
+})();
+</script>
+</body>
+</html>
