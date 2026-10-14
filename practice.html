@@ -118,6 +118,41 @@ details.hint p{margin:8px 0 0}
 .credit a{text-decoration:underline}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(30px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;font-size:14px;opacity:0;transition:.25s;z-index:60;pointer-events:none}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.ltabs{display:flex;gap:4px;padding:8px 12px 0;border-bottom:1px solid var(--border);flex:none}
+.ltab{padding:8px 14px;font-weight:700;font-size:14px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.ltab.on{color:var(--purple-d);border-bottom-color:var(--purple)}
+.ltab[disabled]{opacity:.4;cursor:not-allowed}
+.lp{padding:18px 20px 28px;overflow:auto;flex:1}
+.lp h2{font-size:18px;font-weight:800;margin-bottom:6px;letter-spacing:-.01em}
+.lp p,.lp li{line-height:1.65;color:var(--ink-2);font-size:15px}
+.lp code{font-family:var(--mono);font-size:13px;background:#F1F5F9;padding:1px 6px;border-radius:5px}
+.lp ol,.lp ul{padding-left:22px;margin:6px 0}
+.hstep{border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin:12px 0;background:#fff}
+.hstep b.n{display:inline-block;font-size:12px;font-weight:800;color:var(--purple-d);background:#EDE9FE;border-radius:999px;padding:2px 10px;margin-bottom:6px}
+.hstep.locked{background:var(--soft);color:var(--muted);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.appr{width:100%;border-collapse:collapse;margin:8px 0 14px;font-size:14px}
+.appr th,.appr td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top}
+.appr th{background:var(--soft);font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.appr td.c{font-family:var(--mono);font-size:13px;white-space:nowrap}
+.solcode{position:relative;margin-top:8px}
+.solcode pre{font-family:var(--mono);font-size:13px;background:#1E1E2E;color:#E2E8F0;border-radius:10px;padding:14px;overflow:auto;white-space:pre;line-height:1.5;max-height:520px}
+.sltabs{display:flex;gap:6px;margin-top:14px;align-items:center}
+.sltab{padding:5px 12px;border:1px solid var(--border);border-radius:8px;font-weight:700;font-size:13px}
+.sltab.on{background:#EDE9FE;border-color:#C4B5FD;color:var(--purple-d)}
+.gate{border:1px dashed #C4B5FD;background:#FAF7FF;border-radius:12px;padding:16px;margin-top:6px}
+.clue{background:#ECFEFF;border:1px solid #A5F3FC;border-radius:10px;padding:10px 12px;margin:10px 0;font-size:14px;color:#155E75}
+.mockbar{display:none;align-items:center;gap:14px;padding:8px 20px;background:#0F172A;color:#fff;font-weight:700;font-size:14px;flex:none}
+.mockbar.on{display:flex}
+.mockbar .tm{font-family:var(--mono);font-size:16px;background:#1E293B;padding:4px 10px;border-radius:8px}
+.mockbar .tm.low{background:#DC2626}
+.mockbar .sp{flex:1}
+.mockbar button{background:#fff;color:#0F172A;padding:6px 12px;border-radius:8px;font-weight:800}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;place-items:center;z-index:70}
+.modal.open{display:grid}
+.mbox{background:#fff;border-radius:18px;padding:26px;width:min(560px,92vw);max-height:90vh;overflow:auto;box-shadow:var(--shadow)}
+.mbox h2{font-size:22px;font-weight:800;margin-bottom:6px}
+.mrow{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
+.duebadge{background:#DC2626;color:#fff;border-radius:999px;font-size:11px;padding:1px 7px;margin-left:4px}
 @media (max-width:900px){.wrap{grid-template-columns:1fr;grid-auto-rows:auto}.pane{min-height:60vh}.prob{max-height:none}.hide-sm{display:none}body{height:auto}html,body{height:auto}.ed{min-height:380px}}
 </style>
 </head>
@@ -128,10 +163,15 @@ details.hint p{margin:8px 0 0}
     <a class="hide-sm" href="/">Home</a>
     <a class="hide-sm" href="/roadmap.html">Roadmap</a>
     <a class="on" href="/practice.html">Practice</a>
+    <a class="hide-sm" href="/revise.html" id="nav-rev">Revise</a>
+    <a class="hide-sm" href="/pattern-quiz.html">Pattern Quiz</a>
+    <a class="hide-sm" href="/mock.html">Mock</a>
+    <a class="hide-sm" href="/planner.html">Planner</a>
     <a class="hide-sm" href="/courses.html">Courses</a>
     <a href="/account.html">Dashboard</a>
   </div>
 </div></header>
+<div class="mockbar" id="mockbar"><span>🎯 Mock interview</span><span id="mock-prog"></span><span class="sp"></span><span class="tm" id="mock-tm">--:--</span><button id="mock-end" type="button">End interview</button></div>
 
 <div class="wrap">
   <section class="pane">
@@ -141,7 +181,10 @@ details.hint p{margin:8px 0 0}
       <button class="navbtn" id="prev" type="button" aria-label="Previous problem">‹</button>
       <button class="navbtn" id="next" type="button" aria-label="Next problem">›</button>
     </div>
+    <div class="ltabs"><button class="ltab on" data-l="prob" type="button">Problem</button><button class="ltab" data-l="hints" type="button">Hints</button><button class="ltab" data-l="sol" type="button">Solution</button></div>
     <div class="prob" id="prob"><p class="empty">Loading problems…</p></div>
+    <div class="lp" id="hints" style="display:none"></div>
+    <div class="lp" id="sol" style="display:none"></div>
   </section>
 
   <section class="pane editor-pane">
@@ -177,10 +220,12 @@ details.hint p{margin:8px 0 0}
   <div class="dlist" id="dlist"></div>
 </div></div>
 <div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="mbox" id="mbox"></div></div>
 
 <script src="/practice/cm/cm.js"></script>
 <script src="/practice/guard.js"></script>
 <script src="/practice/wrap.js"></script>
+<script src="/practice/progress.js"></script>
 <script>
 (() => {
 const $ = (s) => document.querySelector(s);
@@ -351,9 +396,9 @@ function fnResult(p, r, l) {
 
 function renderList() {
   const groups = {};
-  PROBS.forEach((p, i) => { const g = (groups[p.group || "Foundations (Start Here)"] = groups[p.group || "Foundations (Start Here)"] || {}); (g[p.stage] = g[p.stage] || []).push([p, i]); });
+  PROBS.forEach((p, i) => { const gk = MOCK ? "Mock interview" : p.group || "Foundations (Start Here)", sk = MOCK ? "Your problems" : p.stage; const g = (groups[gk] = groups[gk] || {}); (g[sk] = g[sk] || []).push([p, i]); });
   $("#dlist").innerHTML = Object.entries(groups).map(([grp, pats]) => `<div class="dst">${esc(grp)}</div>` + Object.entries(pats).map(([st, arr]) => `<div class="dsub">${esc(st)}</div>` + arr.map(([p, i]) =>
-    `<button class="ditem ${solved.has(p.id) ? "done" : ""} ${i === cur ? "cur" : ""}" data-i="${i}" type="button"><span class="ck">${solved.has(p.id) ? "✓" : ""}</span>${esc(p.title)}<span class="d ${p.diff}">${p.diff}</span></button>`).join("")).join("")).join("");
+    `<button class="ditem ${solved.has(p.id) ? "done" : ""} ${i === cur ? "cur" : ""}" data-i="${i}" type="button"><span class="ck">${solved.has(p.id) ? "✓" : ""}</span>${esc(ttl(p, i))}<span class="d ${p.diff}">${p.diff}</span></button>`).join("")).join("")).join("");
   $("#dlist").querySelectorAll(".ditem").forEach((b) => b.onclick = () => { load(+b.dataset.i); $("#drawer").classList.remove("open"); });
   const n = PROBS.filter((p) => solved.has(p.id)).length;
   $("#solved-count").textContent = `${n}/${PROBS.length}`;
@@ -364,17 +409,20 @@ function renderList() {
 function load(i) {
   cur = (i + PROBS.length) % PROBS.length;
   const p = PROBS[cur];
-  history.replaceState(null, "", "?p=" + p.id);
-  document.title = `${p.title} · Practice · AlgoSolveo`;
+  history.replaceState(null, "", MOCK ? "?mock=1" : "?p=" + p.id);
+  document.title = `${MOCK ? ttl(p, cur) : p.title} · Practice · AlgoSolveo`;
   $("#prob").innerHTML = `
-    <h1>${cur + 1}. ${esc(p.title)} <span class="tag ${p.diff}">${p.diff}</span>${solved.has(p.id) ? '<span class="tag solved-tag">✓ Solved</span>' : ""}</h1>
-    <div class="meta">${esc(p.stage)} · <a href="/patterns/${p.pattern}.html">Learn this pattern →</a></div>
+    <h1>${MOCK ? esc(ttl(p, cur)) : `${cur + 1}. ${esc(p.title)}`} <span class="tag ${p.diff}">${p.diff}</span>${!MOCK && solved.has(p.id) ? '<span class="tag solved-tag">✓ Solved</span>' : ""}${MOCK && MOCK.res[p.id] && MOCK.res[p.id].v === "AC" ? '<span class="tag solved-tag">✓ Accepted</span>' : ""}</h1>
+    ${MOCK ? '<div class="meta">Pattern hidden: figuring it out is part of the interview.</div>' : `<div class="meta">${esc(p.stage)} · <a href="/patterns/${p.pattern}.html">Learn this pattern →</a></div>`}
     ${p.statement}
     ${isFn(p) ? fnInfo(p) : `<h3>Input</h3><p>${p.input}</p>
     <h3>Output</h3><p>${p.output}</p>`}
     <h3>Constraints</h3><p>${p.constraints}</p>
     ${p.samples.map((s, k) => `<h3>Example ${k + 1}</h3><div class="sample"><div><b>Input</b><pre>${esc(showIn(p, s.in))}</pre></div><div><b>Output</b><pre>${esc(s.out)}</pre></div></div>`).join("")}
-    <details class="hint"><summary>💡 Stuck? Show a hint</summary><p>${p.hint}</p></details>`;
+    ${MOCK ? "" : `<p class="empty" style="margin-top:16px">Stuck? Open the <a href="#" id="to-hints" style="color:var(--purple-d);font-weight:700">Hints</a> tab: three steps, from a nudge to the full plan.</p>`}`;
+  const th = $("#to-hints"); if (th) th.onclick = (e) => { e.preventDefault(); ltab("hints"); };
+  ltab("prob");
+  document.querySelectorAll(".ltab").forEach((b) => { if (b.dataset.l !== "prob") b.disabled = !!MOCK; });
   cm.setValue(LS.get(`as_code_${p.id}_${lang}`, starterFor(p, lang)));
   cm.clearHistory();
   $("#custom").placeholder = isFn(p) ? "One JSON value per line, in parameter order. Leave as the sample, or type your own." : "Input for Run. Leave as the sample, or type your own.";
@@ -442,6 +490,7 @@ function showRun(res, input, p) {
 
 function showSubmit(results, p) {
   const T = p._tests;
+  { const tr = LS.get("as_tried", {}); tr[p.id] = (tr[p.id] || 0) + 1; LS.set("as_tried", tr); }
   const verdicts = results.map((r, i) => r.s === "OK" ? ((isFn(p) ? ASWrap.check(p, r.val, T[i].out) : norm(r.o) === norm(T[i].out)) ? "AC" : "WA") : r.s);
   const pass = verdicts.filter((v) => v === "AC").length, total = verdicts.length;
   const firstBad = verdicts.findIndex((v) => v !== "AC");
@@ -450,10 +499,16 @@ function showSubmit(results, p) {
   let head;
   if (firstBad === -1) {
     head = `<div class="verdict v-ok">Accepted 🎉</div><div class="vsub">${pass}/${total} tests passed · slowest ${maxT} ms</div>`;
-    if (!solved.has(p.id)) { solved.add(p.id); LS.set("as_practice_solved", [...solved]); renderList(); toast("Solved! " + [...solved].length + " down."); load(cur); tab("result"); }
+    const wasNew = !solved.has(p.id);
+    const ent = ASProgress.recordAccept(p.id);
+    solved = ASProgress.solvedSet();
+    if (MOCK) mockRecord(p, "AC", pass, total);
+    if (wasNew) { renderList(); toast("Solved! " + solved.size + " down. It comes back for revision in " + Math.round((ent.due - Date.now()) / ASProgress.DAY) + " day(s)."); load(cur); tab("result"); }
+    else toast("Accepted. Next revision in " + Math.round((ent.due - Date.now()) / ASProgress.DAY) + " day(s).");
   } else {
     const v = verdicts[firstBad];
     const name = { WA: "Wrong Answer", RE: "Runtime Error", TLE: "Time Limit Exceeded" }[v];
+    if (MOCK) mockRecord(p, v, pass, total);
     head = `<div class="verdict ${v === "TLE" ? "v-warn" : "v-bad"}">${name}</div><div class="vsub">${pass}/${total} tests passed · first failure on test ${firstBad + 1}${firstBad >= nSample ? " (hidden)" : ""}</div>`;
   }
   const chips = verdicts.map((v, i) => `<span class="tc ${v === "AC" ? "p" : "f"}" title="${v}">${i < nSample ? "Ex " : "T"}${i + 1}</span>`).join("");
@@ -465,9 +520,119 @@ function showSubmit(results, p) {
       ? `<div class="io"><b>Input</b><pre>${esc(clip(showIn(p, t.in)))}</pre><b>Your answer</b><pre>${esc(clip(r.val == null ? "(no value)" : r.val))}</pre><b>Expected</b><pre>${esc(clip(t.out))}</pre>${r.o ? `<b>Printed</b><pre>${esc(clip(r.o))}</pre>` : ""}${r.e ? `<b>Error</b><pre class="err">${esc(r.e)}</pre>` : ""}</div>`
       : `<div class="io"><b>Input</b><pre>${esc(clip(t.in.trimEnd()))}</pre><b>Your output</b><pre>${esc(clip(r.o)) || "(nothing printed)"}</pre><b>Expected</b><pre>${esc(clip(t.out))}</pre>${r.e ? `<b>Error</b><pre class="err">${esc(r.e)}</pre>` : ""}</div>`;
   }
-  $("#p-result").innerHTML = head + `<div class="tc-row">${chips}</div>` + detail + (firstBad === -1 && cur < PROBS.length - 1 ? `<button class="btn btn-primary" id="go-next" type="button">Next problem →</button>` : "");
+  $("#p-result").innerHTML = head + `<div class="tc-row">${chips}</div>` + detail + (firstBad === -1 && !MOCK && solved.has(p.id) ? `<button class="btn btn-line" id="see-sol" type="button" style="margin-right:8px">Compare with our solution</button>` : "") + (firstBad === -1 && cur < PROBS.length - 1 ? `<button class="btn btn-primary" id="go-next" type="button">Next problem →</button>` : "");
   const gn = $("#go-next"); if (gn) gn.onclick = () => load(cur + 1);
+  const ss = $("#see-sol"); if (ss) ss.onclick = () => ltab("sol");
 }
+
+
+/* ---------------- hints & solutions ---------------- */
+const LEARN = {};
+function getLearn(p) {
+  if (!LEARN[p.id]) LEARN[p.id] = fetch(`/practice/learn/${p.id}.json`).then((r) => { if (!r.ok) throw new Error("x"); return r.json(); });
+  return LEARN[p.id].catch((e) => { delete LEARN[p.id]; throw e; });
+}
+function ltab(name) {
+  document.querySelectorAll(".ltab").forEach((b) => b.classList.toggle("on", b.dataset.l === name));
+  ["prob", "hints", "sol"].forEach((k) => { $("#" + k).style.display = k === name ? "" : "none"; });
+  const p = PROBS[cur]; if (!p) return;
+  if (name === "hints") renderHints(p);
+  if (name === "sol") renderSol(p);
+}
+document.querySelectorAll(".ltab").forEach((b) => b.onclick = () => { if (!b.disabled) ltab(b.dataset.l); });
+const hintCount = (id) => LS.get("as_hints", {})[id] || 0;
+async function renderHints(p) {
+  const box = $("#hints");
+  box.innerHTML = '<p class="empty">Loading hints…</p>';
+  let L; try { L = await getLearn(p); } catch (_) { box.innerHTML = `<h2>Hint</h2><div class="hstep">${p.hint}</div>`; return; }
+  if (PROBS[cur] !== p) return;
+  const n = hintCount(p.id), names = ["Nudge", "Approach", "Plan"];
+  box.innerHTML = `<h2>Hints, one step at a time</h2><p class="empty">Open the next hint only after you've tried with the last one. Each step gives away a bit more.</p>` +
+    L.hints.map((h, k) => k < n ? `<div class="hstep"><b class="n">Hint ${k + 1} · ${names[k]}</b><div>${h}</div></div>`
+      : k === n ? `<div class="hstep locked"><span>Hint ${k + 1} · ${names[k]}</span><button class="btn btn-line" id="hint-next" type="button">Show hint ${k + 1}</button></div>`
+      : `<div class="hstep locked"><span>Hint ${k + 1} · ${names[k]}</span><span>🔒</span></div>`).join("") +
+    (n >= 3 ? `<p style="margin-top:10px">Still stuck? The <a href="#" id="to-sol" style="color:var(--purple-d);font-weight:700">Solution</a> tab walks through brute force to optimal.</p>` : "");
+  const b = $("#hint-next"); if (b) b.onclick = () => { const m = LS.get("as_hints", {}); m[p.id] = n + 1; LS.set("as_hints", m); renderHints(p); };
+  const t = $("#to-sol"); if (t) t.onclick = (e) => { e.preventDefault(); ltab("sol"); };
+}
+let solLang = LS.get("as_lang", "java");
+async function renderSol(p, force) {
+  const box = $("#sol");
+  const tried = (LS.get("as_tried", {})[p.id] || 0) > 0;
+  const open = force || solved.has(p.id) || hintCount(p.id) >= 3 || tried || LS.get("as_sol_open", {})[p.id];
+  if (!open) {
+    box.innerHTML = `<h2>Solution</h2><div class="gate"><p><b>Give it one honest try first.</b> You remember a solution far better after you've wrestled with the problem. Submit once or open all three hints, and the solution unlocks.</p><p style="margin-top:10px"><button class="btn btn-line" id="hints-first" type="button">Go to hints</button> <button class="btn btn-line" id="sol-anyway" type="button">Show anyway</button></p></div>`;
+    $("#hints-first").onclick = () => ltab("hints");
+    $("#sol-anyway").onclick = () => { const m = LS.get("as_sol_open", {}); m[p.id] = 1; LS.set("as_sol_open", m); renderSol(p, true); };
+    return;
+  }
+  if (!solved.has(p.id)) ASProgress.markHelp(p.id);
+  box.innerHTML = '<p class="empty">Loading solution…</p>';
+  let L; try { L = await getLearn(p); } catch (_) { box.innerHTML = '<p class="empty">Could not load the solution. Check your connection.</p>'; return; }
+  if (PROBS[cur] !== p) return;
+  const code = { java: L.java, python: L.python, javascript: L.javascript };
+  if (!code[solLang]) solLang = "java";
+  box.innerHTML = `<h2>From brute force to optimal</h2>
+    <table class="appr"><tr><th>Approach</th><th>Idea</th><th>Time</th><th>Space</th></tr>${L.approaches.map((a) => `<tr><td><b>${esc(a.name)}</b></td><td>${a.idea}</td><td class="c">${esc(a.time || "")}</td><td class="c">${esc(a.space || "")}</td></tr>`).join("")}</table>
+    <h2>How the optimal solution works</h2><p>${L.explain}</p>
+    <div class="clue"><b>Spot it next time:</b> ${L.recognize}</div>
+    <div class="sltabs">${["java", "python", "javascript"].filter((k) => code[k]).map((k) => `<button class="sltab ${k === solLang ? "on" : ""}" data-k="${k}" type="button">${LABEL[k]}</button>`).join("")}<span style="flex:1"></span><button class="btn btn-line" id="sol-copy" type="button">Copy</button></div>
+    <div class="solcode"><pre>${esc(code[solLang])}</pre></div>
+    ${solved.has(p.id) ? "" : '<p class="empty" style="margin-top:10px">Now close this tab and write it yourself from memory. Problems solved with the solution open come back for revision sooner.</p>'}`;
+  box.querySelectorAll(".sltab").forEach((b) => b.onclick = () => { solLang = b.dataset.k; renderSol(p, true); });
+  $("#sol-copy").onclick = () => { navigator.clipboard && navigator.clipboard.writeText(code[solLang]).then(() => toast("Copied")); };
+}
+
+/* ---------------- mock interview ---------------- */
+let MOCK = null, mockTimer = null;
+const ttl = (p, i) => (MOCK ? "Problem " + "ABCDEFGH"[i] : p.title);
+function mockRecord(p, v, pass, total) {
+  const r = MOCK.res[p.id] || { v: "", tries: 0, pass: 0, total };
+  r.tries++; if (r.v !== "AC") { r.v = v; r.pass = Math.max(r.pass, pass); r.total = total; if (v === "AC") r.at = Date.now() - MOCK.start; }
+  MOCK.res[p.id] = r; LS.set("as_mock", MOCK); mockProg();
+}
+function mockProg() { const n = MOCK.ids.filter((id) => (MOCK.res[id] || {}).v === "AC").length; $("#mock-prog").textContent = `${n}/${MOCK.ids.length} accepted`; }
+function mockTick() {
+  const left = MOCK.start + MOCK.dur - Date.now();
+  if (left <= 0) { endMock(true); return; }
+  const m = Math.floor(left / 60000), s = Math.floor(left / 1000) % 60;
+  const el = $("#mock-tm"); el.textContent = `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`; el.classList.toggle("low", left < 5 * 60000);
+}
+function endMock(timeUp) {
+  clearInterval(mockTimer);
+  MOCK.ended = Date.now(); LS.set("as_mock", MOCK);
+  const used = Math.min(MOCK.dur, MOCK.ended - MOCK.start);
+  let score = 0;
+  const rows = MOCK.ids.map((id, i) => {
+    const p = PROBS.find((x) => x.id === id), r = MOCK.res[id] || { v: "", tries: 0, pass: 0, total: 0 };
+    const w = { Easy: 1, Medium: 2, Hard: 3 }[p.diff];
+    const part = r.v === "AC" ? 1 : r.total ? (r.pass / r.total) * 0.5 : 0;
+    score += w * part - (r.v === "AC" ? Math.min(0.3, 0.1 * Math.max(0, r.tries - 1)) * w : 0);
+    return `<div class="mrow"><span><b>${"ABCDEFGH"[i]}.</b> ${esc(p.title)} <span class="tag ${p.diff}">${p.diff}</span></span><span>${r.v === "AC" ? `✅ Accepted at ${Math.round(r.at / 60000)} min, ${r.tries} submit${r.tries > 1 ? "s" : ""}` : r.tries ? `❌ ${r.pass}/${r.total} tests, ${r.tries} submit${r.tries > 1 ? "s" : ""}` : "Not attempted"}</span></div>`;
+  }).join("");
+  const max = MOCK.ids.reduce((a, id) => a + { Easy: 1, Medium: 2, Hard: 3 }[PROBS.find((x) => x.id === id).diff], 0);
+  const pct = Math.max(0, Math.round((score / max) * 100));
+  const verdict = pct >= 85 ? "Strong hire 🚀" : pct >= 65 ? "Hire 👍" : pct >= 40 ? "Borderline: one more round of practice" : "Not yet: revise these patterns and retry";
+  const hist = LS.get("as_mock_hist", []); hist.unshift({ t: MOCK.start, pct, ids: MOCK.ids }); LS.set("as_mock_hist", hist.slice(0, 30));
+  $("#mbox").innerHTML = `<h2>${timeUp ? "Time's up!" : "Interview finished"}</h2><p class="empty">Time used: ${Math.round(used / 60000)} of ${Math.round(MOCK.dur / 60000)} min</p>
+    <div style="font-size:40px;font-weight:800;margin:14px 0 2px">${pct}<span style="font-size:18px;color:var(--muted)">/100</span></div><p style="font-weight:700;margin-bottom:12px">${verdict}</p>${rows}
+    <p class="empty" style="margin-top:12px">Scoring: accepted problems count fully (harder ones weigh more), partial passes count half, extra wrong submits cost a little, like a real interview.</p>
+    <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap"><a class="btn btn-primary" href="/practice.html?p=${MOCK.ids[0]}">Review problems & solutions</a><a class="btn btn-line" href="/mock.html">New mock</a></div>`;
+  $("#modal").classList.add("open");
+}
+function startMockIfAny() {
+  if (new URLSearchParams(location.search).get("mock") !== "1") return false;
+  const m = LS.get("as_mock", null);
+  if (!m || m.ended || !m.ids || !m.ids.length) { location.href = "/mock.html"; return true; }
+  MOCK = m;
+  const byId = Object.fromEntries(PROBS.map((p) => [p.id, p]));
+  PROBS = m.ids.map((id) => byId[id]).filter(Boolean);
+  $("#mockbar").classList.add("on");
+  $("#mock-end").onclick = () => { if (confirm("End the interview now and see your score?")) endMock(false); };
+  mockProg(); mockTick(); mockTimer = setInterval(mockTick, 1000);
+  return false;
+}
+function revBadge() { const n = ASProgress.due().length; if (n) $("#nav-rev").innerHTML = `Revise<span class="duebadge">${n}</span>`; }
 
 /* ---------------- wiring ---------------- */
 $("#run").onclick = () => run(false);
@@ -488,8 +653,10 @@ document.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.
 
 fetch("/practice/problems.json").then((r) => r.json()).then((d) => {
   PROBS = d;
+  ASProgress.history(); solved = ASProgress.solvedSet(); revBadge();
+  if (startMockIfAny()) return;
   const want = new URLSearchParams(location.search).get("p");
-  const i = Math.max(0, PROBS.findIndex((p) => p.id === want));
+  const i = MOCK ? 0 : Math.max(0, PROBS.findIndex((p) => p.id === want));
   load(i);
   warm(lang);
 }).catch(() => { $("#prob").innerHTML = '<p class="empty">Could not load problems. Refresh the page.</p>'; });
