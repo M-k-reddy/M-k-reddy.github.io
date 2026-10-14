@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Practice Console: Solve DSA Problems in Java, Python, JavaScript · AlgoSolveo</title>
+<meta name="description" content="Free online coding console for DSA practice. Write Java, Python or JavaScript in your browser, run it against test cases and get instant verdicts. No install, no sign-up." />
+<link rel="canonical" href="https://algosolveo.me/practice.html" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="AlgoSolveo Practice Console" />
+<meta property="og:description" content="Write, run and submit DSA solutions in Java, Python or JavaScript, right in your browser. Free." />
+<meta property="og:url" content="https://algosolveo.me/practice.html" />
+<meta property="og:image" content="https://algosolveo.me/og-image.png" />
+<link rel="icon" type="image/png" href="algosolveo-icon128.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" />
+<link rel="stylesheet" href="/practice/cm/cm.css" />
+<style>
+:root{--purple:#8B5CF6;--purple-d:#6D28D9;--cyan:#22D3EE;--ink:#0F172A;--ink-2:#334155;--muted:#64748B;--soft:#F8FAFC;--border:#E2E8F0;--green:#16A34A;--amber:#D97706;--red:#DC2626;
+--font:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;--shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px rgba(15,23,42,.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);color:var(--ink);background:var(--soft);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+button,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+header{background:#fff;border-bottom:1px solid var(--border);flex:none}
+.nav{padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.02em}
+.brand img{width:30px;height:30px}
+.navr{display:flex;align-items:center;gap:20px;font-weight:600;font-size:15px;color:var(--ink-2)}
+.navr a:hover,.navr .on{color:var(--purple-d)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:9px 16px;border-radius:10px;font-weight:700;font-size:14px;white-space:nowrap;transition:.15s}
+.btn-primary{background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;box-shadow:0 8px 20px -8px rgba(109,40,217,.6)}
+.btn-primary:hover{filter:brightness(1.07)}
+.btn-green{background:#16A34A;color:#fff}
+.btn-green:hover{filter:brightness(1.07)}
+.btn-line{border:1px solid var(--border);background:#fff}
+.btn-line:hover{border-color:var(--purple)}
+.btn[disabled]{opacity:.55;cursor:not-allowed;filter:none}
+.wrap{flex:1;display:grid;grid-template-columns:minmax(320px,42%) 1fr;gap:12px;padding:12px;min-height:0}
+.pane{background:#fff;border:1px solid var(--border);border-radius:14px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.ptop{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);flex:none}
+.ptop .sp{flex:1}
+.list-btn{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;padding:7px 12px;border:1px solid var(--border);border-radius:10px}
+.list-btn:hover{border-color:var(--purple)}
+.navbtn{width:32px;height:32px;border:1px solid var(--border);border-radius:9px;font-weight:800}
+.navbtn:hover{border-color:var(--purple)}
+.prob{padding:18px 20px 28px;overflow:auto;flex:1}
+.prob h1{font-size:22px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px}
+.Easy{background:#DCFCE7;color:#166534}.Medium{background:#FEF3C7;color:#92400E}.Hard{background:#FEE2E2;color:#991B1B}
+.solved-tag{background:#EDE9FE;color:var(--purple-d)}
+.meta{font-size:13px;color:var(--muted);font-weight:600;margin:6px 0 16px}
+.meta a{color:var(--purple-d)}
+.prob p{line-height:1.65;color:var(--ink-2);margin-bottom:10px;font-size:15px}
+.prob h3{font-size:14px;font-weight:800;margin:18px 0 6px}
+.prob code{font-family:var(--mono);font-size:13px;background:#F1F5F9;padding:1px 6px;border-radius:5px}
+.sample{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.sample div{background:var(--soft);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.sample b{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+.sample pre{font-family:var(--mono);font-size:13px;white-space:pre-wrap;word-break:break-all}
+details.hint{margin-top:16px;border:1px dashed #C4B5FD;border-radius:10px;padding:10px 14px;background:#FAF7FF}
+details.hint summary{cursor:pointer;font-weight:700;color:var(--purple-d);font-size:14px}
+details.hint p{margin:8px 0 0}
+.editor-pane .ptop select{padding:7px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;font-weight:700;font-size:14px}
+.eng{font-size:12px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:6px}
+.eng i{width:8px;height:8px;border-radius:50%;background:#CBD5E1;display:inline-block}
+.eng.load i{background:var(--amber);animation:pulse 1s infinite}
+.eng.ok i{background:var(--green)}
+.eng.bad i{background:var(--red)}
+@keyframes pulse{50%{opacity:.3}}
+.ed{flex:1;min-height:0;position:relative}
+.CodeMirror{position:absolute;inset:0;height:100%;font-family:var(--mono);font-size:14px;line-height:1.55}
+.bottom{flex:none;border-top:1px solid var(--border);display:flex;flex-direction:column;height:40%;min-height:180px}
+.tabs{display:flex;align-items:center;gap:4px;padding:8px 12px;border-bottom:1px solid var(--border)}
+.tab{padding:6px 12px;border-radius:8px;font-weight:700;font-size:13px;color:var(--muted)}
+.tab.on{background:#EDE9FE;color:var(--purple-d)}
+.tabs .sp{flex:1}
+.panel{flex:1;overflow:auto;padding:12px 14px}
+.panel textarea{width:100%;height:100%;min-height:110px;border:1px solid var(--border);border-radius:10px;padding:10px;font-family:var(--mono);font-size:13px;resize:none;outline:none;background:var(--soft)}
+.panel textarea:focus{border-color:var(--purple);background:#fff}
+.verdict{font-size:20px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+.v-ok{color:var(--green)}.v-bad{color:var(--red)}.v-warn{color:var(--amber)}
+.vsub{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:12px}
+.tc-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tc{font-size:12px;font-weight:700;padding:5px 10px;border-radius:8px;border:1px solid var(--border)}
+.tc.p{background:#DCFCE7;border-color:#BBF7D0;color:#166534}
+.tc.f{background:#FEE2E2;border-color:#FECACA;color:#991B1B}
+.tc.sel{outline:2px solid var(--purple)}
+.io b{display:block;font-size:12px;color:var(--muted);margin:8px 0 4px}
+.io pre{font-family:var(--mono);font-size:13px;background:var(--soft);border:1px solid var(--border);border-radius:8px;padding:8px 10px;white-space:pre-wrap;word-break:break-all;max-height:180px;overflow:auto}
+.io pre.err{color:var(--red);background:#FEF2F2;border-color:#FECACA}
+.empty{color:var(--muted);font-size:14px}
+.spin{width:16px;height:16px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:sp .7s linear infinite;display:none}
+.busy .spin{display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* problem drawer */
+.drawer{position:fixed;inset:0;background:rgba(15,23,42,.35);display:none;z-index:50}
+.drawer.open{display:block}
+.dbox{position:absolute;left:12px;top:12px;bottom:12px;width:min(420px,92vw);background:#fff;border-radius:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+.dhead{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.dhead b{font-size:17px}
+.dhead span{font-size:13px;color:var(--muted);font-weight:600}
+.dlist{overflow:auto;padding:8px 10px 16px}
+.dst{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--purple-d);margin:14px 8px 6px}
+.ditem{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;font-weight:600;font-size:14px;width:100%;text-align:left}
+.ditem:hover{background:var(--soft)}
+.ditem.cur{background:#EDE9FE}
+.ditem .ck{width:18px;height:18px;border-radius:50%;border:2px solid #CBD5E1;flex:none;display:grid;place-items:center;font-size:11px;color:#fff}
+.ditem.done .ck{background:var(--green);border-color:var(--green)}
+.ditem .d{margin-left:auto;font-size:12px}
+.ditem .d.Easy{background:none;color:#16A34A}.ditem .d.Medium{background:none;color:#D97706}
+.credit{font-size:11px;color:var(--muted);padding:6px 14px;border-top:1px solid var(--border);flex:none}
+.credit a{text-decoration:underline}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(30px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;font-size:14px;opacity:0;transition:.25s;z-index:60;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (max-width:900px){.wrap{grid-template-columns:1fr;grid-auto-rows:auto}.pane{min-height:60vh}.prob{max-height:none}.hide-sm{display:none}body{height:auto}html,body{height:auto}.ed{min-height:380px}}
+</style>
+</head>
+<body>
+<header><div class="nav">
+  <a class="brand" href="/"><img src="algosolveo-icon128.png" alt="" />AlgoSolveo</a>
+  <div class="navr">
+    <a class="hide-sm" href="/">Home</a>
+    <a class="hide-sm" href="/roadmap.html">Roadmap</a>
+    <a class="on" href="/practice.html">Practice</a>
+    <a class="hide-sm" href="/courses.html">Courses</a>
+    <a href="/account.html">Dashboard</a>
+  </div>
+</div></header>
+
+<div class="wrap">
+  <section class="pane">
+    <div class="ptop">
+      <button class="list-btn" id="open-list" type="button">☰ Problems <span id="solved-count" style="color:var(--muted);font-weight:600"></span></button>
+      <span class="sp"></span>
+      <button class="navbtn" id="prev" type="button" aria-label="Previous problem">‹</button>
+      <button class="navbtn" id="next" type="button" aria-label="Next problem">›</button>
+    </div>
+    <div class="prob" id="prob"><p class="empty">Loading problems…</p></div>
+  </section>
+
+  <section class="pane editor-pane">
+    <div class="ptop">
+      <select id="lang" aria-label="Language">
+        <option value="java">Java</option>
+        <option value="python">Python 3</option>
+        <option value="javascript">JavaScript</option>
+      </select>
+      <span class="eng" id="eng"><i></i><span>Engine idle</span></span>
+      <span class="sp"></span>
+      <button class="btn btn-line" id="reset" type="button" title="Reset to starter code">Reset</button>
+      <button class="btn btn-line" id="run" type="button"><span class="spin" style="border-color:var(--purple);border-top-color:transparent"></span>Run</button>
+      <button class="btn btn-green" id="submit" type="button"><span class="spin"></span>Submit</button>
+    </div>
+    <div class="ed"><textarea id="code"></textarea></div>
+    <div class="bottom">
+      <div class="tabs">
+        <button class="tab on" data-tab="input" type="button">Custom input</button>
+        <button class="tab" data-tab="result" type="button">Result</button>
+        <span class="sp"></span>
+        <span style="font-size:12px;color:var(--muted);font-weight:600" class="hide-sm">Ctrl + Enter to run · Ctrl + ' to submit</span>
+      </div>
+      <div class="panel" id="p-input"><textarea id="custom" spellcheck="false" placeholder="Input for Run. Leave as the sample, or type your own."></textarea></div>
+      <div class="panel" id="p-result" style="display:none"><p class="empty">Run your code to see the output here.</p></div>
+    </div>
+    <div class="credit">Code runs in your browser. Java powered by <a href="https://cheerpj.com" target="_blank" rel="noopener">CheerpJ</a>, Python by <a href="https://pyodide.org" target="_blank" rel="noopener">Pyodide</a>.</div>
+  </section>
+</div>
+
+<div class="drawer" id="drawer"><div class="dbox">
+  <div class="dhead"><div><b>Practice problems</b><br><span id="d-sub"></span></div><button class="navbtn" id="close-list" type="button" aria-label="Close">×</button></div>
+  <div class="dlist" id="dlist"></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script src="/practice/cm/cm.js"></script>
+<script src="/practice/guard.js"></script>
+<script>
+(() => {
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+const LS = { get: (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (_) { return d; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} } };
+const TIME_LIMIT = 4000;
+
+const STARTER = {
+  java: `import java.util.*;
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        Scanner sc = new Scanner(System.in);
+        // Read the input, solve, and print the answer.
+        // Example: int n = sc.nextInt();
+
+    }
+}
+`,
+  python: `import sys
+
+def main():
+    data = sys.stdin.read().split()
+    # Read the input, solve, and print the answer.
+    # Example: n = int(data[0])
+
+
+main()
+`,
+  javascript: `// The whole input is available as the string \`input\`.
+// You can also call readline() to get it one line at a time.
+const data = input.trim().split(/\\s+/);
+// Read the input, solve, and print with console.log().
+// Example: const n = Number(data[0]);
+
+`,
+};
+const MODES = { java: "text/x-java", python: "python", javascript: "javascript" };
+
+let PROBS = [], cur = 0, lang = LS.get("as_lang", "java");
+let solved = new Set(LS.get("as_practice_solved", []));
+$("#lang").value = lang;
+
+const cm = CodeMirror.fromTextArea($("#code"), {
+  mode: MODES[lang], theme: "material-darker", lineNumbers: true, indentUnit: 4, tabSize: 4,
+  matchBrackets: true, autoCloseBrackets: true, lineWrapping: false,
+  extraKeys: { "Ctrl-Enter": () => run(false), "Cmd-Enter": () => run(false), "Ctrl-'": () => run(true), "Cmd-'": () => run(true), Tab: (c) => c.execCommand(c.somethingSelected() ? "indentMore" : "insertSoftTab") },
+});
+let saveT;
+cm.on("change", () => { clearTimeout(saveT); saveT = setTimeout(() => { if (PROBS[cur]) LS.set(`as_code_${PROBS[cur].id}_${lang}`, cm.getValue()); }, 400); });
+
+function toast(m) { const t = $("#toast"); t.textContent = m; t.classList.add("on"); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove("on"), 2600); }
+function tab(name) {
+  document.querySelectorAll(".tab").forEach((b) => b.classList.toggle("on", b.dataset.tab === name));
+  $("#p-input").style.display = name === "input" ? "" : "none";
+  $("#p-result").style.display = name === "result" ? "" : "none";
+}
+document.querySelectorAll(".tab").forEach((b) => b.onclick = () => tab(b.dataset.tab));
+
+/* ---------------- engines ---------------- */
+function setEng(state, text) { const e = $("#eng"); e.className = "eng " + state; e.querySelector("span").textContent = text; }
+
+class WorkerEngine {
+  constructor(url, name) { this.url = url; this.name = name; this.w = null; this.ready = null; this.seq = 0; }
+  start() {
+    if (this.ready) return this.ready;
+    this.w = new Worker(this.url);
+    this.ready = new Promise((res, rej) => {
+      const to = setTimeout(() => rej(new Error(this.name + " took too long to load. Check your connection.")), 90000);
+      this.w.onmessage = (e) => { if (e.data && e.data.ready) { clearTimeout(to); res(); } };
+      this.w.onerror = (e) => { clearTimeout(to); rej(new Error(e.message || "Failed to start " + this.name)); };
+    });
+    return this.ready;
+  }
+  kill() { if (this.w) this.w.terminate(); this.w = null; this.ready = null; }
+  async runOne(code, input) {
+    await this.start();
+    const id = ++this.seq;
+    return new Promise((res) => {
+      const to = setTimeout(() => { this.kill(); res({ s: "TLE", o: "", e: "", t: TIME_LIMIT }); this.start().catch(() => {}); }, TIME_LIMIT);
+      this.w.onmessage = (e) => { if (e.data && e.data.id === id) { clearTimeout(to); res(e.data); } };
+      this.w.postMessage({ id, code, input });
+    });
+  }
+  async runAll(code, inputs) { const out = []; for (const i of inputs) out.push(await this.runOne(code, i)); return { results: out }; }
+}
+
+const JavaEngine = {
+  ready: null, R: null,
+  start() {
+    if (this.ready) return this.ready;
+    this.ready = (async () => {
+      await new Promise((res, rej) => {
+        if (window.cheerpjInit) return res();
+        const s = document.createElement("script"); s.src = "https://cjrtnc.leaningtech.com/4.3/loader.js";
+        s.onload = res; s.onerror = () => rej(new Error("Could not load the Java engine. Check your connection."));
+        document.head.appendChild(s);
+      });
+      await cheerpjInit({ version: 8, status: "none" });
+      const lib = await cheerpjRunLibrary("/app/practice/runner.jar:/app/practice/javac-lite.jar");
+      this.R = await lib.algosolveo.Runner;
+      // warm up the compiler so the first real run is quick
+      await this.R.compile("/files/as", "Main", "public class Main { public static void main(String[] a){ System.out.print(1); } }");
+    })();
+    this.ready.catch(() => { this.ready = null; });
+    return this.ready;
+  },
+  async runAll(code, inputs) {
+    await this.start();
+    const m = code.match(/public\s+(?:final\s+)?class\s+([A-Za-z_$][\w$]*)/);
+    const cls = m ? m[1] : "Main";
+    const c = await this.R.compile("/files/as", cls, guardJava(code));
+    if (c.startsWith("CE:")) return { ce: c.slice(3) };
+    const dir = c.slice(3);
+    const raw = await this.R.run(dir, cls, inputs.join("\u0001"), TIME_LIMIT);
+    return { results: JSON.parse(raw) };
+  },
+};
+const ENGINES = { java: JavaEngine, python: new WorkerEngine("/practice/py-worker.js", "Python"), javascript: new WorkerEngine("/practice/js-worker.js", "JavaScript") };
+const LABEL = { java: "Java", python: "Python", javascript: "JavaScript" };
+
+function warm(l) {
+  const e = ENGINES[l];
+  setEng("load", `Loading ${LABEL[l]}…`);
+  e.start().then(() => { if (lang === l) setEng("ok", `${LABEL[l]} ready`); })
+    .catch((err) => { if (lang === l) setEng("bad", "Engine failed: tap Run to retry"); console.error(err); });
+}
+
+/* ---------------- problems ---------------- */
+function norm(s) { return String(s).replace(/\r/g, "").split("\n").map((l) => l.replace(/\s+$/, "")).join("\n").replace(/\n+$/, ""); }
+
+function renderList() {
+  const groups = {};
+  PROBS.forEach((p, i) => (groups[p.stage] = groups[p.stage] || []).push([p, i]));
+  $("#dlist").innerHTML = Object.entries(groups).map(([st, arr]) => `<div class="dst">${esc(st)}</div>` + arr.map(([p, i]) =>
+    `<button class="ditem ${solved.has(p.id) ? "done" : ""} ${i === cur ? "cur" : ""}" data-i="${i}" type="button"><span class="ck">${solved.has(p.id) ? "✓" : ""}</span>${esc(p.title)}<span class="d ${p.diff}">${p.diff}</span></button>`).join("")).join("");
+  $("#dlist").querySelectorAll(".ditem").forEach((b) => b.onclick = () => { load(+b.dataset.i); $("#drawer").classList.remove("open"); });
+  const n = PROBS.filter((p) => solved.has(p.id)).length;
+  $("#solved-count").textContent = `${n}/${PROBS.length}`;
+  $("#d-sub").textContent = `${n} of ${PROBS.length} solved · Foundations stage`;
+}
+
+function load(i) {
+  cur = (i + PROBS.length) % PROBS.length;
+  const p = PROBS[cur];
+  history.replaceState(null, "", "?p=" + p.id);
+  document.title = `${p.title} · Practice · AlgoSolveo`;
+  $("#prob").innerHTML = `
+    <h1>${cur + 1}. ${esc(p.title)} <span class="tag ${p.diff}">${p.diff}</span>${solved.has(p.id) ? '<span class="tag solved-tag">✓ Solved</span>' : ""}</h1>
+    <div class="meta">${esc(p.stage)} · <a href="/patterns/${p.pattern}.html">Learn this pattern →</a></div>
+    ${p.statement}
+    <h3>Input</h3><p>${p.input}</p>
+    <h3>Output</h3><p>${p.output}</p>
+    <h3>Constraints</h3><p>${p.constraints}</p>
+    ${p.samples.map((s, k) => `<h3>Example ${k + 1}</h3><div class="sample"><div><b>Input</b><pre>${esc(s.in.trimEnd())}</pre></div><div><b>Output</b><pre>${esc(s.out)}</pre></div></div>`).join("")}
+    <details class="hint"><summary>💡 Stuck? Show a hint</summary><p>${p.hint}</p></details>`;
+  cm.setValue(LS.get(`as_code_${p.id}_${lang}`, STARTER[lang]));
+  cm.clearHistory();
+  $("#custom").value = p.samples[0].in;
+  $("#p-result").innerHTML = '<p class="empty">Run your code to see the output here.</p>';
+  tab("input");
+  renderList();
+  $("#prob").scrollTop = 0;
+}
+
+/* ---------------- run / submit ---------------- */
+let busy = false;
+function setBusy(b, which) {
+  busy = b;
+  $("#run").disabled = $("#submit").disabled = b;
+  $("#run").classList.toggle("busy", b && which === "run");
+  $("#submit").classList.toggle("busy", b && which === "submit");
+}
+
+async function run(isSubmit) {
+  if (busy || !PROBS.length) return;
+  const p = PROBS[cur], code = cm.getValue(), l = lang;
+  setBusy(true, isSubmit ? "submit" : "run");
+  tab("result");
+  const eng = ENGINES[l];
+  const engReady = !!(eng.R || (eng.ready && eng.w));
+  $("#p-result").innerHTML = `<p class="empty">${engReady ? "Running…" : `Starting ${LABEL[l]} engine… (first time only, a few seconds)`}</p>`;
+  if (!engReady) setEng("load", `Loading ${LABEL[l]}…`);
+  try {
+    const custom = !isSubmit;
+    const inputs = isSubmit ? p.tests.map((t) => t.in) : [$("#custom").value];
+    const r = await eng.runAll(code, inputs);
+    setEng("ok", `${LABEL[l]} ready`);
+    if (r.ce !== undefined) { showCE(r.ce); return; }
+    if (custom) showRun(r.results[0], inputs[0], p);
+    else showSubmit(r.results, p);
+  } catch (err) {
+    console.error(err);
+    setEng("bad", "Engine error");
+    $("#p-result").innerHTML = `<div class="verdict v-warn">Engine problem</div><div class="vsub">${esc(err.message || err)}</div><p class="empty">Reload the page and try again. If you're on a school or office network, it may block the engine download.</p>`;
+  } finally { setBusy(false); }
+}
+
+function showCE(msg) {
+  $("#p-result").innerHTML = `<div class="verdict v-bad">Compilation Error</div><div class="vsub">Fix the error below and run again.</div><div class="io"><pre class="err">${esc(msg.trim())}</pre></div>`;
+}
+
+function showRun(res, input, p) {
+  const sample = p.samples.find((s) => norm(s.in) === norm(input));
+  let head = "";
+  if (res.s === "TLE") head = `<div class="verdict v-warn">Time Limit Exceeded</div><div class="vsub">Your code ran longer than ${TIME_LIMIT / 1000}s. Check for an infinite loop.</div>`;
+  else if (res.s === "RE") head = `<div class="verdict v-bad">Runtime Error</div><div class="vsub">${res.t} ms</div>`;
+  else if (sample) {
+    const ok = norm(res.o) === norm(sample.out);
+    head = ok ? `<div class="verdict v-ok">Matches the expected output</div><div class="vsub">${res.t} ms · Now press Submit to run all hidden tests.</div>`
+              : `<div class="verdict v-bad">Wrong Answer</div><div class="vsub">${res.t} ms · Your output differs from the expected output.</div>`;
+  } else head = `<div class="verdict">Finished</div><div class="vsub">${res.t} ms · Custom input, so there is no expected output to compare.</div>`;
+  $("#p-result").innerHTML = head + `<div class="io"><b>Input</b><pre>${esc(input.trimEnd()) || "(empty)"}</pre><b>Your output</b><pre>${esc(res.o) || "(nothing printed)"}</pre>${sample ? `<b>Expected</b><pre>${esc(sample.out)}</pre>` : ""}${res.e ? `<b>Error</b><pre class="err">${esc(res.e)}</pre>` : ""}</div>`;
+}
+
+function showSubmit(results, p) {
+  const verdicts = results.map((r, i) => r.s === "OK" ? (norm(r.o) === norm(p.tests[i].out) ? "AC" : "WA") : r.s);
+  const pass = verdicts.filter((v) => v === "AC").length, total = verdicts.length;
+  const firstBad = verdicts.findIndex((v) => v !== "AC");
+  const maxT = Math.max(...results.map((r) => r.t || 0));
+  const nSample = p.samples.length;
+  let head;
+  if (firstBad === -1) {
+    head = `<div class="verdict v-ok">Accepted 🎉</div><div class="vsub">${pass}/${total} tests passed · slowest ${maxT} ms</div>`;
+    if (!solved.has(p.id)) { solved.add(p.id); LS.set("as_practice_solved", [...solved]); renderList(); toast("Solved! " + [...solved].length + " down."); load(cur); tab("result"); }
+  } else {
+    const v = verdicts[firstBad];
+    const name = { WA: "Wrong Answer", RE: "Runtime Error", TLE: "Time Limit Exceeded" }[v];
+    head = `<div class="verdict ${v === "TLE" ? "v-warn" : "v-bad"}">${name}</div><div class="vsub">${pass}/${total} tests passed · first failure on test ${firstBad + 1}${firstBad >= nSample ? " (hidden)" : ""}</div>`;
+  }
+  const chips = verdicts.map((v, i) => `<span class="tc ${v === "AC" ? "p" : "f"}" title="${v}">${i < nSample ? "Ex " : "T"}${i + 1}</span>`).join("");
+  let detail = "";
+  if (firstBad !== -1) {
+    const t = p.tests[firstBad], r = results[firstBad];
+    const clip = (s) => (s.length > 1200 ? s.slice(0, 1200) + "\n…" : s);
+    detail = `<div class="io"><b>Input</b><pre>${esc(clip(t.in.trimEnd()))}</pre><b>Your output</b><pre>${esc(clip(r.o)) || "(nothing printed)"}</pre><b>Expected</b><pre>${esc(clip(t.out))}</pre>${r.e ? `<b>Error</b><pre class="err">${esc(r.e)}</pre>` : ""}</div>`;
+  }
+  $("#p-result").innerHTML = head + `<div class="tc-row">${chips}</div>` + detail + (firstBad === -1 && cur < PROBS.length - 1 ? `<button class="btn btn-primary" id="go-next" type="button">Next problem →</button>` : "");
+  const gn = $("#go-next"); if (gn) gn.onclick = () => load(cur + 1);
+}
+
+/* ---------------- wiring ---------------- */
+$("#run").onclick = () => run(false);
+$("#submit").onclick = () => run(true);
+$("#reset").onclick = () => { if (confirm("Replace your code with the starter template?")) { cm.setValue(STARTER[lang]); } };
+$("#prev").onclick = () => load(cur - 1);
+$("#next").onclick = () => load(cur + 1);
+$("#open-list").onclick = () => $("#drawer").classList.add("open");
+$("#close-list").onclick = () => $("#drawer").classList.remove("open");
+$("#drawer").onclick = (e) => { if (e.target.id === "drawer") $("#drawer").classList.remove("open"); };
+$("#lang").onchange = (e) => {
+  lang = e.target.value; LS.set("as_lang", lang);
+  cm.setOption("mode", MODES[lang]);
+  cm.setValue(LS.get(`as_code_${PROBS[cur].id}_${lang}`, STARTER[lang]));
+  warm(lang);
+};
+document.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && !cm.hasFocus()) { e.preventDefault(); run(false); } });
+
+fetch("/practice/problems.json").then((r) => r.json()).then((d) => {
+  PROBS = d;
+  const want = new URLSearchParams(location.search).get("p");
+  const i = Math.max(0, PROBS.findIndex((p) => p.id === want));
+  load(i);
+  warm(lang);
+}).catch(() => { $("#prob").innerHTML = '<p class="empty">Could not load problems. Refresh the page.</p>'; });
+})();
+</script>
+</body>
+</html>
