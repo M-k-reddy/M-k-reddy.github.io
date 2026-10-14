@@ -491,6 +491,9 @@ fetch("/practice/problems-next.json").then((r) => r.json()).then((d) => {
   const want = new URLSearchParams(location.search).get("p");
   const i = Math.max(0, PROBS.findIndex((p) => p.id === want));
   load(i);
+  const hc = location.hash.match(/code=([^&]+)/); const hl = location.hash.match(/lang=(\w+)/);
+  if (hl) { lang = hl[1]; $("#lang").value = lang; cm.setOption("mode", MODES[lang]); }
+  if (hc) cm.setValue(decodeURIComponent(escape(atob(decodeURIComponent(hc[1])))));
   warm(lang);
 }).catch(() => { $("#prob").innerHTML = '<p class="empty">Could not load problems. Refresh the page.</p>'; });
 })();
