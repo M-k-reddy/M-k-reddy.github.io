@@ -65,7 +65,7 @@
   }
 
   // ---------- program builders ----------
-  const PY_PRE = 'exec("import json as __json, sys as __sys\\nfrom typing import *\\nimport collections, heapq, bisect, math, itertools, functools\\nfrom collections import *\\nfrom heapq import *\\nfrom bisect import *\\nfrom functools import *\\nfrom itertools import *\\nfrom math import inf\\nclass ListNode:\\n    def __init__(self, val=0, next=None):\\n        self.val = val\\n        self.next = next\\nclass TreeNode:\\n    def __init__(self, val=0, left=None, right=None):\\n        self.val = val\\n        self.left = left\\n        self.right = right\\n")\n';
+  const PY_PRE = 'exec("import json as __json, sys as __sys\\n__sys.setrecursionlimit(4000)\\nfrom typing import *\\nimport collections, heapq, bisect, math, itertools, functools\\nfrom collections import *\\nfrom heapq import *\\nfrom bisect import *\\nfrom functools import *\\nfrom itertools import *\\nfrom math import inf\\nclass ListNode:\\n    def __init__(self, val=0, next=None):\\n        self.val = val\\n        self.next = next\\nclass TreeNode:\\n    def __init__(self, val=0, left=None, right=None):\\n        self.val = val\\n        self.left = left\\n        self.right = right\\n")\n';
   const PY_DRV = `
 def __mk_list(a):
     d = t = ListNode(0)
