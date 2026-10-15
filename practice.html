@@ -87,6 +87,7 @@ details.hint p{margin:8px 0 0}
 .v-ok{color:var(--green)}.v-bad{color:var(--red)}.v-warn{color:var(--amber)}
 .vsub{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:12px}
 .tc-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tle-tip{margin:8px 0 4px;font-size:14px;color:var(--muted,#5E574C);line-height:1.5}
 .tc{font-size:12px;font-weight:700;padding:5px 10px;border-radius:8px;border:1px solid var(--border)}
 .tc.p{background:#DCFCE7;border-color:#BBF7D0;color:#166534}
 .tc.f{background:#FEE2E2;border-color:#FECACA;color:#991B1B}
@@ -219,7 +220,8 @@ details.hint p{margin:8px 0 0}
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
 const LS = { get: (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (_) { return d; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} } };
-const TIME_LIMIT = 4000;
+const LIMITS = { javascript: 4000, python: 6000, java: 8000 }; // per test, like LeetCode (browser engines differ in speed)
+const tl = (l) => LIMITS[l] || 4000;
 
 const STARTER = {
   java: `import java.util.*;
@@ -278,7 +280,7 @@ document.querySelectorAll(".tab").forEach((b) => b.onclick = () => tab(b.dataset
 function setEng(state, text) { const e = $("#eng"); e.className = "eng " + state; e.querySelector("span").textContent = text; }
 
 class WorkerEngine {
-  constructor(url, name) { this.url = url; this.name = name; this.w = null; this.ready = null; this.seq = 0; }
+  constructor(url, name, lim) { this.url = url; this.name = name; this.lim = lim; this.w = null; this.ready = null; this.seq = 0; }
   start() {
     if (this.ready) return this.ready;
     this.w = new Worker(this.url);
@@ -294,7 +296,7 @@ class WorkerEngine {
     await this.start();
     const id = ++this.seq;
     return new Promise((res) => {
-      const to = setTimeout(() => { this.kill(); res({ s: "TLE", o: "", e: "", t: TIME_LIMIT }); this.start().catch(() => {}); }, TIME_LIMIT);
+      const to = setTimeout(() => { this.kill(); res({ s: "TLE", o: "", e: "", t: this.lim }); this.start().catch(() => {}); }, this.lim);
       this.w.onmessage = (e) => { if (e.data && e.data.id === id) { clearTimeout(to); res(e.data); } };
       this.w.postMessage({ id, code, input });
     });
@@ -329,11 +331,11 @@ const JavaEngine = {
     const c = await this.R.compile("/files/as", cls, guardJava(code));
     if (c.startsWith("CE:")) return { ce: c.slice(3) };
     const dir = c.slice(3);
-    const raw = await this.R.run(dir, cls, inputs.join("\u0001"), TIME_LIMIT);
+    const raw = await this.R.run(dir, cls, inputs.join("\u0001"), tl("java"));
     return { results: JSON.parse(raw) };
   },
 };
-const ENGINES = { java: JavaEngine, python: new WorkerEngine("/practice/py-worker.js", "Python"), javascript: new WorkerEngine("/practice/js-worker.js", "JavaScript") };
+const ENGINES = { java: JavaEngine, python: new WorkerEngine("/practice/py-worker.js", "Python", tl("python")), javascript: new WorkerEngine("/practice/js-worker.js", "JavaScript", tl("javascript")) };
 const LABEL = { java: "Java", python: "Python", javascript: "JavaScript" };
 
 function warm(l) {
@@ -467,7 +469,7 @@ function showCE(msg) {
 function showRun(res, input, p) {
   const sample = p.samples.find((s) => norm(s.in) === norm(input));
   let head = "";
-  if (res.s === "TLE") head = `<div class="verdict v-warn">Time Limit Exceeded</div><div class="vsub">Your code ran longer than ${TIME_LIMIT / 1000}s. Check for an infinite loop.</div>`;
+  if (res.s === "TLE") head = `<div class="verdict v-warn">Time Limit Exceeded</div><div class="vsub">Your code ran longer than ${tl(lang) / 1000}s. Check for an infinite loop or a slow approach.</div>`;
   else if (res.s === "RE") head = `<div class="verdict v-bad">Runtime Error</div><div class="vsub">${res.t} ms</div>`;
   else if (sample) {
     const ok = isFn(p) ? ASWrap.check(p, res.val, sample.out) : norm(res.o) === norm(sample.out);
@@ -499,14 +501,18 @@ function showSubmit(results, p) {
     const v = verdicts[firstBad];
     const name = { WA: "Wrong Answer", RE: "Runtime Error", TLE: "Time Limit Exceeded" }[v];
     if (MOCK) mockRecord(p, v, pass, total);
-    head = `<div class="verdict ${v === "TLE" ? "v-warn" : "v-bad"}">${name}</div><div class="vsub">${pass}/${total} tests passed · first failure on test ${firstBad + 1}${firstBad >= nSample ? " (hidden)" : ""}</div>`;
+    const isBig = !!(T[firstBad] && T[firstBad].big);
+    head = `<div class="verdict ${v === "TLE" ? "v-warn" : "v-bad"}">${name}</div><div class="vsub">${pass}/${total} tests passed · ${v === "TLE" ? "last executed" : "first failure on"} test ${firstBad + 1}${isBig ? " (large hidden test)" : firstBad >= nSample ? " (hidden)" : ""}</div>`
+      + (v === "TLE" ? `<p class="tle-tip">${isBig ? `Your answers are right on the smaller tests, but this solution is too slow for the largest input (time limit ${tl(lang) / 1000}s per test). Think about a faster approach, for example O(n) or O(n log n) instead of nested loops.` : `Your code ran longer than ${tl(lang) / 1000}s on this test. Check for an infinite loop or a slow approach.`}</p>` : "");
   }
-  const chips = verdicts.map((v, i) => `<span class="tc ${v === "AC" ? "p" : "f"}" title="${v}">${i < nSample ? "Ex " : "T"}${i + 1}</span>`).join("");
+  const chips = verdicts.map((v, i) => `<span class="tc ${v === "AC" ? "p" : "f"}" title="${v}${T[i] && T[i].big ? " · large test" : ""}">${i < nSample ? "Ex " : T[i] && T[i].big ? "Big " : "T"}${i + 1}</span>`).join("");
   let detail = "";
   if (firstBad !== -1) {
     const t = T[firstBad], r = results[firstBad];
     const clip = (s) => (s.length > 1200 ? s.slice(0, 1200) + "\n…" : s);
-    detail = isFn(p)
+    detail = r.s === "TLE"
+      ? `<div class="io"><b>Last executed input</b><pre>${esc(clip(isFn(p) ? showIn(p, t.in) : t.in.trimEnd()))}</pre></div>`
+      : isFn(p)
       ? `<div class="io"><b>Input</b><pre>${esc(clip(showIn(p, t.in)))}</pre><b>Your answer</b><pre>${esc(clip(r.val == null ? "(no value)" : r.val))}</pre><b>Expected</b><pre>${esc(clip(t.out))}</pre>${r.o ? `<b>Printed</b><pre>${esc(clip(r.o))}</pre>` : ""}${r.e ? `<b>Error</b><pre class="err">${esc(r.e)}</pre>` : ""}</div>`
       : `<div class="io"><b>Input</b><pre>${esc(clip(t.in.trimEnd()))}</pre><b>Your output</b><pre>${esc(clip(r.o)) || "(nothing printed)"}</pre><b>Expected</b><pre>${esc(clip(t.out))}</pre>${r.e ? `<b>Error</b><pre class="err">${esc(r.e)}</pre>` : ""}</div>`;
   }
