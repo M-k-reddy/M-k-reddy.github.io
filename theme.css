@@ -1,0 +1,22 @@
+/* AlgoSolveo Notebook theme — shared across pages */
+:root{--nb-ink:#1C1A17;--nb-ink2:#5E574C;--nb-bg:#FBF7F0;--nb-paper:#FFFDF8;--nb-line:#E8DDCB;--nb-rust:#C2522C;--nb-honey:#F2B544}
+html,body{background:var(--nb-bg)!important;color:var(--nb-ink)}
+body{-webkit-font-smoothing:antialiased}
+h1,h2,.h2,.hero h1,.page-title{font-family:"Fraunces",Georgia,serif!important;font-weight:500!important;letter-spacing:-.02em!important}
+h1{font-variation-settings:"opsz" 144}
+h3{font-family:"Fraunces",Georgia,serif;letter-spacing:0}
+h1 em,h2 em{font-style:italic;color:var(--nb-rust)}
+.grad-text,.grad{background:none!important;-webkit-text-fill-color:var(--nb-rust)!important;color:var(--nb-rust)!important;font-style:italic}
+/* buttons: calm, solid ink pills */
+.btn,.button{border-radius:999px!important}
+.btn-primary,.btn.primary,button.primary{background:var(--nb-ink)!important;color:var(--nb-bg)!important;box-shadow:none!important;border-color:var(--nb-ink)!important}
+.btn-primary:hover,.btn.primary:hover,button.primary:hover{background:#000!important;transform:translateY(-1px)}
+.btn-outline,.btn-ghost,.btn.ghost{background:transparent!important;border:1.5px solid var(--nb-ink)!important;color:var(--nb-ink)!important}
+.btn-outline:hover,.btn-ghost:hover,.btn.ghost:hover{background:var(--nb-ink)!important;color:var(--nb-bg)!important}
+/* headers */
+header,.nav,header.nav{background:rgba(251,247,240,.88)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.brand img{border-radius:50%}
+/* soft surfaces */
+.card,.plan,.course,.pat-card,.panel-card,.box{border-color:var(--nb-line)}
+::selection{background:#F6D9A8;color:var(--nb-ink)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--nb-rust)!important;outline-offset:3px}
