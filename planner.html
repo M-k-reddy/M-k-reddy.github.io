@@ -23,18 +23,18 @@
 <main>
 
 <h1>Study Planner</h1>
-<p class="lead">Tell us when your placements start and how much time you have. We'll turn the roadmap into a day-by-day plan, with revision days built in, and keep it in step with what you solve.</p>
+<p class="lead">Pick the company and your interview date. If it's days away, you get that company's most-asked problems and patterns first, with revision and a mock before the big day. If you have months, you get the full roadmap with those problems front-loaded.</p>
 <div id="form" class="card">
   <div class="two" style="gap:24px">
     <div>
-      <div class="field"><label for="date">When do placements / interviews start?</label><input type="date" id="date" /><small>Or leave empty and choose weeks below.</small></div>
-      <div class="field"><label for="weeks">Weeks to prepare</label><select id="weeks"></select></div>
+      <div class="field"><label for="date">Interview date</label><input type="date" id="date" /><small>Or leave empty and choose how long below.</small></div>
+      <div class="field"><label for="weeks">Time to prepare</label><select id="weeks"></select></div>
       <div class="field"><label for="days">Study days per week</label><select id="days"><option>5</option><option selected>6</option><option>7</option></select></div>
     </div>
     <div>
       <div class="field"><label for="hours">Time per study day</label><select id="hours"><option value="1">About 1 hour</option><option value="2" selected>About 2 hours</option><option value="3">About 3 hours</option><option value="4">4+ hours</option></select></div>
       <div class="field"><label>Where are you starting?</label><div class="opts" id="level"></div></div>
-      <div class="field"><label>Target</label><div class="opts" id="target"></div></div>
+      <div class="field"><label>Target company</label><div class="opts" id="target"></div><small>Company lists are built from public interview reports, so treat them as likely topics, not a guarantee.</small></div>
     </div>
   </div>
   <button class="btn btn-primary" id="make" type="button">Build my plan →</button>
@@ -51,47 +51,72 @@ const LS = ASProgress.LS, DAY = ASProgress.DAY;
 const loadProbs = () => fetch("/practice/problems.json").then((r) => r.json());
 
 const LEVELS = { new: "New to coding", basics: "I know the basics", dsa: "I've done some DSA" };
-const TARGETS = { service: "Service companies (TCS, Infosys…)", product: "Product companies", all: "Everything" };
-let level = "basics", target = "product";
-const sel = $("#weeks"); [2, 3, 4, 6, 8, 10, 12, 16, 20, 24].forEach((w) => sel.insertAdjacentHTML("beforeend", `<option value="${w}" ${w === 8 ? "selected" : ""}>${w} weeks</option>`));
+const TARGETS = { any: "No specific company", amazon: "Amazon", google: "Google", microsoft: "Microsoft", meta: "Meta", flipkart: "Flipkart", tcs: "TCS", infosys: "Infosys" };
+let level = "basics", target = "any", CO = {};
+fetch("/practice/companies.json").then((r) => r.json()).then((c) => (CO = c)).catch(() => {});
+const sel = $("#weeks"); [[3, "3 days"], [5, "5 days"], [7, "1 week"], [10, "10 days"], [14, "2 weeks"], [21, "3 weeks"], [28, "4 weeks"], [42, "6 weeks"], [56, "8 weeks"], [84, "12 weeks"], [112, "16 weeks"], [168, "24 weeks"]].forEach(([d, n]) => sel.insertAdjacentHTML("beforeend", `<option value="${d}" ${d === 56 ? "selected" : ""}>${n}</option>`));
 function opts(id, map, get, set) { $(id).innerHTML = Object.entries(map).map(([k, n]) => `<button type="button" class="opt ${k === get() ? "on" : ""}" data-k="${k}">${n}</button>`).join(""); $(id).querySelectorAll(".opt").forEach((b) => b.onclick = () => { set(b.dataset.k); opts(id, map, get, set); }); }
 opts("#level", LEVELS, () => level, (v) => (level = v));
 opts("#target", TARGETS, () => target, (v) => (target = v));
-$("#date").onchange = () => { const d = new Date($("#date").value); if (isNaN(d)) return; const w = Math.max(2, Math.round((d - Date.now()) / (7 * DAY))); let best = 2; [...sel.options].forEach((o) => { if (Math.abs(+o.value - w) < Math.abs(best - w)) best = +o.value; }); sel.value = best; };
+const untilDate = () => { const v = $("#date").value; if (!v) return 0; const [y, m, d] = v.split("-").map(Number); const t0 = new Date(); t0.setHours(0, 0, 0, 0); return Math.round((new Date(y, m - 1, d) - t0) / DAY); };
+$("#date").onchange = () => { const n = untilDate(); if (n <= 0) return; let best = +sel.options[0].value; [...sel.options].forEach((o) => { if (Math.abs(+o.value - n) < Math.abs(best - n)) best = +o.value; }); sel.value = best; };
 let P = [];
 loadProbs().then((p) => { P = p; const saved = LS.get("as_plan", null); if (saved) show(saved); });
 const dayKey = (t) => { const d = new Date(t); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
 const dparse = (k) => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
 function build() {
-  const weeks = +sel.value, dpw = +$("#days").value, hours = +$("#hours").value;
+  const until = untilDate(), horizon = until > 0 ? until : +sel.value; // calendar days, interview day excluded
+  const dpw = +$("#days").value, hours = +$("#hours").value, per = { 1: 2, 2: 3, 3: 5, 4: 7 }[hours];
+  const co = target !== "any" ? CO[target] : null;
+  const order = Object.fromEntries(P.map((p, i) => [p.id, i]));
+  const solved = ASProgress.solvedSet();
+  // calendar: study days, rest days, revision every 7th study day, and the last study day(s) kept for mock + revision
+  const cal = []; let t = new Date(); t.setHours(0, 0, 0, 0);
+  for (let k = 0, wd = 0; k < Math.max(1, horizon); k++, wd = (wd + 1) % 7) { if (!(dpw < 7 && wd >= dpw)) cal.push(dayKey(t)); t = new Date(t.getFullYear(), t.getMonth(), t.getDate() + 1); }
+  if (!cal.length) cal.push(dayKey(Date.now()));
+  const finalDays = cal.length >= 10 ? 2 : cal.length >= 3 ? 1 : 0;
+  const kind = cal.map((d, i) => (i >= cal.length - finalDays ? "final" : horizon > 14 && (i + 1) % 7 === 0 ? "rev" : horizon <= 14 && cal.length >= 6 && (i + 1) % 5 === 0 ? "rev" : "study"));
+  const capacity = kind.filter((k) => k === "study").length * per;
+  // pool for this level / company type
   let pool = P.slice();
   if (level === "dsa") pool = pool.filter((p) => !/^Foundations/.test(p.group));
   if (level === "basics") { let k = 0; pool = pool.filter((p) => !/^Foundations/.test(p.group) || p.diff !== "Easy" || k++ % 2 === 0); }
-  if (target === "service") pool = pool.filter((p) => p.diff !== "Hard" && !/Graphs|Tries|Heaps/.test(p.group) || /^Foundations/.test(p.group));
-  const per = { 1: 2, 2: 3, 3: 5, 4: 7 }[hours];
-  const studyDays = weeks * dpw;
-  const revDays = Math.floor(studyDays / 7); // roughly one revision day per 7 study days
-  const capacity = (studyDays - revDays) * per;
-  if (pool.length > capacity) { // keep the order, trim evenly inside each pattern so every pattern is still covered
-    const byStage = {}; pool.forEach((p) => (byStage[p.stage] = byStage[p.stage] || []).push(p));
-    const ratio = capacity / pool.length; const keep = new Set();
-    Object.values(byStage).forEach((a) => a.slice(0, Math.max(1, Math.round(a.length * ratio))).forEach((p) => keep.add(p.id)));
-    pool = pool.filter((p) => keep.has(p.id)).slice(0, capacity);
-  }
-  const days = []; let i = 0, t = new Date(); t.setHours(0, 0, 0, 0); let n = 0, wd = 0;
-  while (i < pool.length || days.length < studyDays) {
-    if (days.length >= studyDays + 30) break;
-    const isRest = dpw < 7 && wd >= dpw; // rest days at the end of each 7-day week
-    if (!isRest) {
-      n++;
-      if (n % 7 === 0) days.push({ d: dayKey(t), rev: true, ids: [] });
-      else if (i < pool.length) { days.push({ d: dayKey(t), ids: pool.slice(i, i + per).map((p) => p.id) }); i += per; }
-      else days.push({ d: dayKey(t), rev: true, mock: true, ids: [] });
+  if (co && co.kind === "service") pool = pool.filter((p) => (p.diff !== "Hard" && !/Graphs|Tries|Heaps/.test(p.group)) || /^Foundations/.test(p.group));
+  const fresh = (id) => !solved.has(id);
+  let pick = [];
+  if (co) {
+    const must = co.ids.filter((id) => order[id] !== undefined && fresh(id)); // ranked most-asked first
+    const focus = pool.filter((p) => co.focus.includes(p.stage) && fresh(p.id) && !must.includes(p.id)).map((p) => p.id);
+    const rest = pool.filter((p) => !co.focus.includes(p.stage) && fresh(p.id) && !must.includes(p.id));
+    pick = must.slice(0, capacity);
+    if (pick.length < capacity) { // focus patterns next, a balanced slice of each
+      const room = capacity - pick.length, byStage = {}; focus.forEach((id) => (byStage[P[order[id]].stage] = byStage[P[order[id]].stage] || []).push(id));
+      const ratio = Math.min(1, room / Math.max(1, focus.length)); const f = [];
+      Object.values(byStage).forEach((a) => a.slice(0, Math.max(1, Math.round(a.length * ratio))).forEach((id) => f.push(id)));
+      pick = pick.concat(f.slice(0, room));
     }
-    wd = (wd + 1) % 7; t = new Date(t.getFullYear(), t.getMonth(), t.getDate() + 1);
-    if (i >= pool.length && days.length >= studyDays) break;
+    if (pick.length < capacity) { // then the rest of the roadmap, trimmed evenly per pattern
+      const room = capacity - pick.length, byStage = {}; rest.forEach((p) => (byStage[p.stage] = byStage[p.stage] || []).push(p.id));
+      const ratio = Math.min(1, room / Math.max(1, rest.length)); const r = [];
+      Object.values(byStage).forEach((a) => a.slice(0, Math.max(1, Math.round(a.length * ratio))).forEach((id) => r.push(id)));
+      pick = pick.concat(r.slice(0, room));
+    }
+    // short prep: most-asked first, grouped by pattern. Long prep: learn in roadmap order.
+    if (horizon <= 21) { const rank = Object.fromEntries(pick.map((id, i) => [id, i])); const sr = {}; pick.forEach((id) => { const st = P[order[id]].stage; sr[st] = Math.min(sr[st] ?? 1e9, rank[id]); }); pick.sort((a, b) => sr[P[order[a]].stage] - sr[P[order[b]].stage] || order[a] - order[b]); }
+    else pick.sort((a, b) => order[a] - order[b]);
+  } else {
+    let pl = pool.filter((p) => fresh(p.id));
+    if (pl.length > capacity) { const byStage = {}; pl.forEach((p) => (byStage[p.stage] = byStage[p.stage] || []).push(p)); const ratio = capacity / pl.length; const keep = new Set(); Object.values(byStage).forEach((a) => a.slice(0, Math.max(1, Math.round(a.length * ratio))).forEach((p) => keep.add(p.id))); pl = pl.filter((p) => keep.has(p.id)).slice(0, capacity); }
+    pick = pl.map((p) => p.id);
   }
-  return { made: Date.now(), weeks, dpw, hours, per, level, target, days };
+  const days = []; let i = 0;
+  cal.forEach((d, k) => {
+    if (kind[k] === "final") days.push({ d, rev: true, mock: true, final: true, ids: [] });
+    else if (kind[k] === "rev") days.push({ d, rev: true, ids: [] });
+    else if (i < pick.length) { days.push({ d, ids: pick.slice(i, i + per) }); i += per; }
+    else days.push({ d, rev: true, mock: true, ids: [] });
+  });
+  return { made: Date.now(), horizon, interview: until > 0 ? $("#date").value : null, dpw, hours, per, level, target, company: co ? co.name : null, coIds: co ? co.ids : [], days };
 }
 $("#make").onclick = () => { if (!P.length) return; const pl = build(); LS.set("as_plan", pl); show(pl); };
 function show(pl) {
@@ -105,7 +130,8 @@ function show(pl) {
   // today's tasks: the plan's day, plus anything unsolved from earlier days if behind (max 3)
   const carry = pl.days.filter((d) => d.d < today).flatMap((d) => d.ids).filter((id) => !solved.has(id) && byId[id]).slice(0, 3);
   const due = ASProgress.due().filter((id) => byId[id]);
-  const prow = (id) => { const p = byId[id]; return `<a class="row" href="/practice.html?p=${id}"><span class="ck ${solved.has(id) ? "done" : ""}">${solved.has(id) ? "✓" : ""}</span><span><span class="t">${esc(p.title)}</span><br><span class="m">${esc(p.stage)}</span></span><span class="sp"></span><span class="tag ${p.diff}">${p.diff}</span></a>`; };
+  const coSet = new Set(pl.coIds || []);
+  const prow = (id) => { const p = byId[id]; return `<a class="row" href="/practice.html?p=${id}"><span class="ck ${solved.has(id) ? "done" : ""}">${solved.has(id) ? "✓" : ""}</span><span><span class="t">${esc(p.title)}</span><br><span class="m">${esc(p.stage)}</span></span><span class="sp"></span>${coSet.has(id) ? `<span class="tag" style="background:#fdeee6;color:#b4532a;margin-right:6px">${esc(pl.company)}</span>` : ""}<span class="tag ${p.diff}">${p.diff}</span></a>`; };
   let todayHtml;
   if (!todayDay) todayHtml = '<p class="empty">Your plan is complete. Time for mock interviews: <a href="/mock.html" style="color:var(--purple-d);font-weight:700">start one</a>.</p>';
   else if (todayDay.d !== today) todayHtml = '<p class="empty">Rest day. Your next study day is ' + dparse(todayDay.d).toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "short" }) + '.</p>';
@@ -113,7 +139,9 @@ function show(pl) {
   else todayHtml = todayDay.ids.filter((id) => byId[id]).map(prow).join("") + (carry.length ? `<div class="row"><span class="m">Catch-up from earlier days</span></div>${carry.map(prow).join("")}` : "");
   const weeks = []; pl.days.forEach((d) => { const w = Math.floor((dparse(d.d) - dparse(pl.days[0].d)) / (7 * DAY)); (weeks[w] = weeks[w] || []).push(d); });
   $("#form").style.display = "none"; $("#plan").style.display = "";
-  $("#plan").innerHTML = `<div class="grid">
+  const left = pl.interview ? Math.round((dparse(pl.interview) - dparse(today)) / DAY) : null;
+  const head = pl.company || pl.interview ? `<p class="lead" style="margin:0 0 14px">${pl.company ? esc(pl.company) + " prep" : "Interview prep"}${pl.interview ? (left > 0 ? ` · interview in ${left} day${left === 1 ? "" : "s"}` : left === 0 ? " · interview today, good luck!" : " · interview date passed") : ""}</p>` : "";
+  $("#plan").innerHTML = head + `<div class="grid">
       <div class="stat"><b>${done}/${all.length}</b><span>plan problems solved</span><div class="bar" style="margin-top:8px"><i style="width:${all.length ? (done / all.length) * 100 : 0}%"></i></div></div>
       <div class="stat"><b>${behind ? behind + " behind" : "On track ✓"}</b><span>${behind ? "Catch up a few each day" : "Keep the streak going"}</span></div>
       <div class="stat"><b>${pl.days[pl.days.length - 1] ? dparse(pl.days[pl.days.length - 1].d).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) : "-"}</b><span>plan finishes</span></div>
@@ -122,7 +150,7 @@ function show(pl) {
     <h2>Your plan, week by week</h2>
     ${weeks.map((w, k) => { const ids = w.flatMap((d) => d.ids).filter((id) => byId[id]); const dn = ids.filter((id) => solved.has(id)).length; const st = [...new Set(ids.map((id) => byId[id].stage))];
       return `<details class="card" style="margin-bottom:10px;padding:14px 18px" ${w.some((d) => d.d === today) ? "open" : ""}><summary style="cursor:pointer;font-weight:800">Week ${k + 1} · ${dn}/${ids.length} done <span class="m" style="font-weight:600;color:var(--muted)">· ${esc(st.slice(0, 3).join(", "))}${st.length > 3 ? "…" : ""}</span></summary>
-      ${w.map((d) => `<div style="margin-top:10px"><div class="m" style="font-weight:800;font-size:13px;color:${d.d === today ? "var(--purple-d)" : "var(--muted)"}">${dparse(d.d).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })}${d.d === today ? " · today" : ""}</div>${d.rev ? `<div class="row"><span>${d.mock ? "🎯 Mock interview + revision" : "🔁 Revision: re-solve what's due"}</span></div>` : `<div class="list" style="border-radius:10px">${d.ids.filter((id) => byId[id]).map(prow).join("")}</div>`}</div>`).join("")}</details>`; }).join("")}
+      ${w.map((d) => `<div style="margin-top:10px"><div class="m" style="font-weight:800;font-size:13px;color:${d.d === today ? "var(--purple-d)" : "var(--muted)"}">${dparse(d.d).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })}${d.d === today ? " · today" : ""}</div>${d.rev ? `<div class="row"><span>${d.final ? "🎯 Final prep: mock interview + re-solve your weakest problems" : d.mock ? "🎯 Mock interview + revision" : "🔁 Revision: re-solve what's due"}</span></div>` : `<div class="list" style="border-radius:10px">${d.ids.filter((id) => byId[id]).map(prow).join("")}</div>`}</div>`).join("")}</details>`; }).join("")}
     <p style="margin-top:14px"><button class="btn btn-line" id="redo" type="button">Make a new plan</button> <button class="btn btn-line" onclick="window.print()" type="button">Print</button></p>`;
   $("#redo").onclick = () => { if (confirm("Replace your current plan?")) { $("#plan").style.display = "none"; $("#form").style.display = ""; } };
 }
