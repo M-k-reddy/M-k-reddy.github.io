@@ -622,6 +622,9 @@ footer{border-top:1px solid var(--border);background:#fff}
   };
 })();
 </script>
+<script>
+(function(){try{const ids=new Set(JSON.parse(localStorage.getItem("as_practice_solved")||"[]"));const base=new Set();document.querySelectorAll("a.prob").forEach(a=>{const m=a.getAttribute("href").match(/[?&]p=([\w-]+)/);if(m&&ids.has(m[1]))base.add(a.dataset.s);});const orig=window.__applyProgress;if(!orig)return;window.__applyProgress=function(s){return orig(new Set([...base,...(s||[])]));};window.__applyProgress(new Set());}catch(e){}})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // Publishable key only; Row Level Security protects the data. Never put a secret key here.
