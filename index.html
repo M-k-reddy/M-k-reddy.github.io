@@ -194,25 +194,10 @@ section{padding:100px 0}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.js .reveal{opacity:1;transform:none}}
 </style>
 <script>document.documentElement.classList.add("js");</script>
+<link rel="stylesheet" href="/theme.css" />
 </head>
 <body>
-<header class="nav" id="nav">
-  <div class="wrap nav-in">
-    <a class="brand" href="#top" aria-label="AlgoSolveo home"><img src="algosolveo-icon128.png" alt="" width="32" height="32" />AlgoSolveo</a>
-    <nav class="nav-links" aria-label="Main">
-      <a href="roadmap.html">Roadmap</a><a href="practice.html">Practice</a><a href="pattern-quiz.html">Quiz</a><a href="mock.html">Mock tests</a><a href="courses.html">Courses</a>
-    </nav>
-    <div class="nav-cta">
-      <a class="signin" href="account.html">Sign in</a>
-      <a class="btn btn-dark" href="patterns/basics-loops-math.html">Start learning</a>
-    </div>
-    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span></span></button>
-  </div>
-  <div class="mobile-menu" id="mobile-menu">
-    <a href="roadmap.html">Roadmap</a><a href="practice.html">Practice</a><a href="pattern-quiz.html">Pattern quiz</a><a href="mock.html">Mock tests</a><a href="revise.html">Revision</a><a href="courses.html">Courses</a><a class="m-signin" href="account.html">Sign in</a>
-    <a class="btn btn-dark" href="patterns/basics-loops-math.html">Start learning</a>
-  </div>
-</header>
+<div class="asn" role="banner"><div class="asn-in"><a class="asn-brand" href="/" aria-label="AlgoSolveo home"><img src="/algosolveo-icon128.png" alt="" width="32" height="32" />AlgoSolveo</a><nav class="asn-pill" aria-label="Main"><a href="/roadmap.html">Roadmap</a><a href="/practice.html">Practice</a><a href="/courses.html">Courses</a><div class="asn-more"><button type="button" aria-expanded="false" aria-haspopup="true">More <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="asn-drop"><a href="/pattern-quiz.html">Pattern quiz<small>Guess the pattern, title hidden</small></a><a href="/mock.html">Mock tests<small>Timed interview rounds</small></a><a href="/revise.html">Revision<small>Problems come back before you forget</small></a><a href="/planner.html">Study planner<small>A day-by-day plan to your date</small></a></div></div></nav><div class="asn-r"><a class="asn-signin" data-auto href="/account.html">Sign in</a></div><button class="asn-burger" type="button" aria-label="Open menu" aria-expanded="false"><span></span></button></div><div class="asn-mob"><a href="/roadmap.html">Roadmap</a><a href="/practice.html">Practice</a><a href="/courses.html">Courses</a><a href="/pattern-quiz.html">Pattern quiz</a><a href="/mock.html">Mock tests</a><a href="/revise.html">Revision</a><a href="/planner.html">Study planner</a></div></div>
 
 <main id="top">
 <section class="hero">
@@ -352,10 +337,7 @@ if(r.ok||r.status===409){m.textContent="You're on the list. We'll email you on l
 </script>
 <script>
 (function(){
-  var nav=document.getElementById("nav"),burger=document.getElementById("burger");
-  burger.addEventListener("click",function(){var o=nav.classList.toggle("open");burger.setAttribute("aria-expanded",o);burger.setAttribute("aria-label",o?"Close menu":"Open menu");});
-  document.querySelectorAll("#mobile-menu a").forEach(function(a){a.addEventListener("click",function(){nav.classList.remove("open");burger.setAttribute("aria-expanded","false");});});
-  addEventListener("scroll",function(){nav.classList.toggle("scrolled",scrollY>8)},{passive:true});
+  addEventListener("scroll",function(){0},{passive:true});
   // scale the path card to fit narrow screens
   var st=document.getElementById("stage"),sk=document.getElementById("stack");
   function fit(){var s=Math.min(1,st.clientWidth/520);sk.style.transform="scale("+s+")";st.style.height=(590*s)+"px";}
@@ -408,5 +390,6 @@ var mm=document.querySelector(".mobile-menu .m-signin");if(mm)mm.textContent="Da
   load(0);
 })();
 </script>
+<script src="/nav.js"></script>
 </body>
 </html>
