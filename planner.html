@@ -43,6 +43,7 @@
 
 </main>
 <script src="/practice/progress.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (() => {
 const $ = (s) => document.querySelector(s);
@@ -57,7 +58,16 @@ let level = "basics", target = "any", CO = {};
 const sel = $("#weeks"); [[3, "3 days"], [5, "5 days"], [7, "1 week"], [10, "10 days"], [14, "2 weeks"], [21, "3 weeks"], [28, "4 weeks"], [42, "6 weeks"], [56, "8 weeks"], [84, "12 weeks"], [112, "16 weeks"], [168, "24 weeks"]].forEach(([d, n]) => sel.insertAdjacentHTML("beforeend", `<option value="${d}" ${d === 56 ? "selected" : ""}>${n}</option>`));
 function opts(id, map, get, set) { $(id).innerHTML = Object.entries(map).map(([k, n]) => `<button type="button" class="opt ${k === get() ? "on" : ""}" data-k="${k}">${n}</button>`).join(""); $(id).querySelectorAll(".opt").forEach((b) => b.onclick = () => { set(b.dataset.k); opts(id, map, get, set); }); }
 opts("#level", LEVELS, () => level, (v) => (level = v));
-opts("#target", TARGETS, () => target, (v) => { if (v !== "any") { $("#co-lock").style.display = ""; return; } target = v; });
+const coOpts = () => opts("#target", TARGETS, () => target, (v) => { if (v !== "any" && !CO[v]) { $("#co-lock").style.display = ""; return; } target = v; });
+coOpts();
+// Company lists live in Supabase and are only readable by admins and paying users (Row Level Security)
+(async () => { try {
+  const sb = supabase.createClient("https://qxlmqxslpwqbrisywzsp.supabase.co", "sb_publishable_xnrdX1gkErcDhVHZf2l7yA_dFMQSa5k", { auth: { persistSession: true, detectSessionInUrl: false } });
+  const { data: { session } } = await sb.auth.getSession(); if (!session) return;
+  const { data } = await sb.from("company_tracks").select("id, data"); if (!data || !data.length) return;
+  data.forEach((r) => { CO[r.id] = r.data; TARGETS[r.id] = r.data.name; });
+  $("#co-lock").style.display = "none"; coOpts();
+} catch (_) {} })();
 const untilDate = () => { const v = $("#date").value; if (!v) return 0; const [y, m, d] = v.split("-").map(Number); const t0 = new Date(); t0.setHours(0, 0, 0, 0); return Math.round((new Date(y, m - 1, d) - t0) / DAY); };
 $("#date").onchange = () => { const n = untilDate(); if (n <= 0) return; let best = +sel.options[0].value; [...sel.options].forEach((o) => { if (Math.abs(+o.value - n) < Math.abs(best - n)) best = +o.value; }); sel.value = best; };
 let P = [];
