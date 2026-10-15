@@ -29,10 +29,8 @@
     <div>
       <div class="field"><label for="date">Interview date</label><input type="date" id="date" /><small>Or leave empty and choose how long below.</small></div>
       <div class="field"><label for="weeks">Time to prepare</label><select id="weeks"></select></div>
-      <div class="field"><label for="days">Study days per week</label><select id="days"><option>5</option><option selected>6</option><option>7</option></select></div>
     </div>
     <div>
-      <div class="field"><label for="hours">Time per study day</label><select id="hours"><option value="1">About 1 hour</option><option value="2" selected>About 2 hours</option><option value="3">About 3 hours</option><option value="4">4+ hours</option></select></div>
       <div class="field"><label>Where are you starting?</label><div class="opts" id="level"></div></div>
       <div class="field"><label>Target company</label><div class="opts" id="target"></div><small id="co-lock" style="display:none">Company-wise plans are part of the paid <a href="/courses.html" style="color:var(--purple-d);font-weight:700">Company-wise Prep Tracks</a>, coming soon. For now, build a general plan with your interview date.</small></div>
     </div>
@@ -76,7 +74,7 @@ const dayKey = (t) => { const d = new Date(t); return `${d.getFullYear()}-${Stri
 const dparse = (k) => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
 function build() {
   const until = untilDate(), horizon = until > 0 ? until : +sel.value; // calendar days, interview day excluded
-  const dpw = +$("#days").value, hours = +$("#hours").value, per = { 1: 2, 2: 3, 3: 5, 4: 7 }[hours];
+  const dpw = 7;
   const co = target !== "any" ? CO[target] : null;
   const order = Object.fromEntries(P.map((p, i) => [p.id, i]));
   const solved = ASProgress.solvedSet();
@@ -86,13 +84,19 @@ function build() {
   if (!cal.length) cal.push(dayKey(Date.now()));
   const finalDays = cal.length >= 10 ? 2 : cal.length >= 3 ? 1 : 0;
   const kind = cal.map((d, i) => (i >= cal.length - finalDays ? "final" : horizon > 14 && (i + 1) % 7 === 0 ? "rev" : horizon <= 14 && cal.length >= 6 && (i + 1) % 5 === 0 ? "rev" : "study"));
-  const capacity = kind.filter((k) => k === "study").length * per;
+  const studyN = Math.max(1, kind.filter((k) => k === "study").length);
   // pool for this level / company type
   let pool = P.slice();
   if (level === "dsa") pool = pool.filter((p) => !/^Foundations/.test(p.group));
   if (level === "basics") { let k = 0; pool = pool.filter((p) => !/^Foundations/.test(p.group) || p.diff !== "Easy" || k++ % 2 === 0); }
   if (co && co.kind === "service") pool = pool.filter((p) => (p.diff !== "Hard" && !/Graphs|Tries|Heaps/.test(p.group)) || /^Foundations/.test(p.group));
   const fresh = (id) => !solved.has(id);
+  // Cover everything that matters: full roadmap (or the company's list + its patterns when time is short), spread across the days
+  let need;
+  if (co) { const base = new Set(co.ids.filter((id) => order[id] !== undefined && fresh(id))); pool.forEach((p) => { if (fresh(p.id) && (horizon > 21 || co.focus.includes(p.stage))) base.add(p.id); }); need = base.size; }
+  else need = pool.filter((p) => fresh(p.id)).length;
+  const MAXDAY = 12, per = Math.min(MAXDAY, Math.max(2, Math.ceil(need / studyN)));
+  const capacity = studyN * per, short = need > capacity;
   let pick = [];
   if (co) {
     const must = co.ids.filter((id) => order[id] !== undefined && fresh(id)); // ranked most-asked first
@@ -126,7 +130,7 @@ function build() {
     else if (i < pick.length) { days.push({ d, ids: pick.slice(i, i + per) }); i += per; }
     else days.push({ d, rev: true, mock: true, ids: [] });
   });
-  return { made: Date.now(), horizon, interview: until > 0 ? $("#date").value : null, dpw, hours, per, level, target, company: co ? co.name : null, coIds: co ? co.ids : [], days };
+  return { made: Date.now(), horizon, interview: until > 0 ? $("#date").value : null, dpw, per, need, short, level, target, company: co ? co.name : null, coIds: co ? co.ids : [], days };
 }
 $("#make").onclick = () => { if (!P.length) return; const pl = build(); LS.set("as_plan", pl); show(pl); };
 function show(pl) {
@@ -150,7 +154,7 @@ function show(pl) {
   const weeks = []; pl.days.forEach((d) => { const w = Math.floor((dparse(d.d) - dparse(pl.days[0].d)) / (7 * DAY)); (weeks[w] = weeks[w] || []).push(d); });
   $("#form").style.display = "none"; $("#plan").style.display = "";
   const left = pl.interview ? Math.round((dparse(pl.interview) - dparse(today)) / DAY) : null;
-  const head = pl.company || pl.interview ? `<p class="lead" style="margin:0 0 14px">${pl.company ? esc(pl.company) + " prep" : "Interview prep"}${pl.interview ? (left > 0 ? ` · interview in ${left} day${left === 1 ? "" : "s"}` : left === 0 ? " · interview today, good luck!" : " · interview date passed") : ""}</p>` : "";
+  const head = `<p class="lead" style="margin:0 0 14px">${pl.company ? esc(pl.company) + " prep" : "Your prep"}${pl.interview ? (left > 0 ? ` · interview in ${left} day${left === 1 ? "" : "s"}` : left === 0 ? " · interview today, good luck!" : " · interview date passed") : ""}${pl.per ? ` · about ${pl.per} problems a day` + (pl.short ? `. Not enough days for all ${pl.need}, so the most important come first.` : ", covering everything.") : ""}</p>`;
   $("#plan").innerHTML = head + `<div class="grid">
       <div class="stat"><b>${done}/${all.length}</b><span>plan problems solved</span><div class="bar" style="margin-top:8px"><i style="width:${all.length ? (done / all.length) * 100 : 0}%"></i></div></div>
       <div class="stat"><b>${behind ? behind + " behind" : "On track ✓"}</b><span>${behind ? "Catch up a few each day" : "Keep the streak going"}</span></div>
