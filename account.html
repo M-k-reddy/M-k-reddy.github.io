@@ -8,10 +8,10 @@
 <link rel="icon" type="image/png" href="algosolveo-icon128.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" />
 <style>
-:root{--purple:#8B5CF6;--purple-d:#6D28D9;--cyan:#22D3EE;--ink:#0F172A;--ink-2:#334155;--muted:#64748B;--soft:#F8FAFC;--border:#E2E8F0;--green:#16A34A;--amber:#D97706;--red:#DC2626;
---font:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px rgba(15,23,42,.06)}
+:root{--purple:#C2522C;--purple-d:#9A3D1E;--cyan:#F2B544;--ink:#1C1A17;--ink-2:#5E574C;--muted:#857C6E;--soft:#F6EFE3;--border:#E8DDCB;--green:#16A34A;--amber:#D97706;--red:#DC2626;
+--font:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--shadow:0 1px 2px rgba(28,26,23,.04),0 8px 24px rgba(28,26,23,.06)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);color:var(--ink);background:var(--soft);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
@@ -23,7 +23,7 @@ header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top
 .navr{display:flex;align-items:center;gap:18px;font-weight:600;font-size:15px;color:var(--ink-2)}
 .navr a:hover,.navr button:hover{color:var(--purple-d)}
 .me{display:flex;align-items:center;gap:8px}
-.me img{width:30px;height:30px;border-radius:50%;object-fit:cover;background:#EDE9FE}
+.me img{width:30px;height:30px;border-radius:50%;object-fit:cover;background:#FCEBDD}
 main{flex:1;width:100%;max-width:1100px;margin:0 auto;padding:32px 24px 64px}
 .hidden{display:none!important}
 .card{background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:24px}
@@ -33,7 +33,7 @@ main{flex:1;width:100%;max-width:1100px;margin:0 auto;padding:32px 24px 64px}
 h1{font-size:28px;font-weight:800;letter-spacing:-.02em}
 .sub{color:var(--muted);margin:8px 0 28px}
 .gbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:13px 18px;border-radius:12px;border:1px solid var(--border);background:#fff;font-weight:700;font-size:16px;transition:.15s}
-.gbtn:hover{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.12)}
+.gbtn:hover{border-color:var(--purple);box-shadow:0 0 0 3px rgba(194,82,44,.12)}
 .gbtn svg{width:20px;height:20px}
 .note{font-size:14px;color:var(--muted);margin-top:16px}
 /* dashboard */
@@ -41,7 +41,7 @@ h1{font-size:28px;font-weight:800;letter-spacing:-.02em}
 .hello h1{font-size:30px}
 .hello p{color:var(--muted);margin-top:4px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:12px;font-weight:700;font-size:15px;white-space:nowrap}
-.btn-primary{background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;box-shadow:0 8px 20px -6px rgba(109,40,217,.5)}
+.btn-primary{background:#1C1A17;color:#fff;box-shadow:0 8px 20px -6px rgba(154,61,30,.5)}
 .btn-primary:hover{filter:brightness(1.07)}
 .btn-line{border:1px solid var(--border);background:#fff;color:var(--ink)}
 .btn-line:hover{border-color:var(--purple)}
@@ -49,9 +49,9 @@ h1{font-size:28px;font-weight:800;letter-spacing:-.02em}
 .stat .k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .stat .v{font-size:28px;font-weight:800;margin-top:6px;letter-spacing:-.02em}
 .stat .s{font-size:13px;color:var(--muted);margin-top:4px}
-.pill{display:inline-block;padding:3px 12px;border-radius:999px;font-size:15px;font-weight:700;background:#EDE9FE;color:var(--purple-d);vertical-align:middle}
+.pill{display:inline-block;padding:3px 12px;border-radius:999px;font-size:15px;font-weight:700;background:#FCEBDD;color:var(--purple-d);vertical-align:middle}
 .pill.pro{background:#DCFCE7;color:var(--green)}
-.bar{height:8px;border-radius:99px;background:#EEF2F7;overflow:hidden;margin-top:10px}
+.bar{height:8px;border-radius:99px;background:#F3E9D8;overflow:hidden;margin-top:10px}
 .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--purple),var(--cyan));width:0;transition:width .6s}
 .grid{display:grid;grid-template-columns:1.6fr 1fr;gap:24px;align-items:start}
 .side{display:flex;flex-direction:column;gap:24px}
@@ -59,7 +59,7 @@ h2{font-size:18px;font-weight:800;letter-spacing:-.01em}
 .h2row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px}
 .filters{display:flex;gap:6px}
 .filters button{font-size:13px;font-weight:700;padding:5px 10px;border-radius:8px;color:var(--muted)}
-.filters button.on{background:#EDE9FE;color:var(--purple-d)}
+.filters button.on{background:#FCEBDD;color:var(--purple-d)}
 .pat{border-top:1px solid var(--border)}
 .pat:first-child{border-top:0}
 .pat summary{list-style:none;cursor:pointer;padding:12px 2px;display:grid;grid-template-columns:1fr 120px 56px;gap:14px;align-items:center}
@@ -71,7 +71,7 @@ h2{font-size:18px;font-weight:800;letter-spacing:-.01em}
 .probs{padding:0 2px 12px;display:flex;flex-direction:column;gap:2px}
 .prob{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:9px;font-size:14px}
 .prob:hover{background:var(--soft)}
-.chk{width:18px;height:18px;border-radius:6px;border:1.5px solid #CBD5E1;flex:none;display:grid;place-items:center;font-size:11px;color:#fff}
+.chk{width:18px;height:18px;border-radius:6px;border:1.5px solid #DCCFB8;flex:none;display:grid;place-items:center;font-size:11px;color:#fff}
 .prob.ok .chk{background:var(--green);border-color:var(--green)}
 .prob .t{flex:1}
 .prob.ok .t{color:var(--muted)}
@@ -95,13 +95,14 @@ h2{font-size:18px;font-weight:800;letter-spacing:-.01em}
 @media(max-width:900px){.stats{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}}
 @media(max-width:520px){.stats{grid-template-columns:1fr}.navr .hide-sm{display:none}.pat summary{grid-template-columns:1fr 70px 48px}}
 </style>
+<link rel="stylesheet" href="/theme.css" />
 </head>
 <body>
 <header><div class="nav">
   <a class="brand" href="/"><img src="algosolveo-icon128.png" alt="" />AlgoSolveo</a>
   <div class="navr">
     <a class="hide-sm" href="/">Home</a>
-    <a class="hide-sm" href="/#pricing">Pricing</a>
+    <a class="hide-sm" href="/courses.html">Courses</a>
     <span class="me hidden" id="nav-me"><img id="nav-avatar" alt="" /><button id="signout">Sign out</button></span>
   </div>
 </div></header>
@@ -122,7 +123,7 @@ h2{font-size:18px;font-weight:800;letter-spacing:-.01em}
   <div id="signed-in" class="hidden">
     <div class="hello">
       <div><h1 id="name">Your dashboard</h1><p id="email"></p></div>
-      <a class="btn btn-primary" id="upgrade-top" href="/#pricing">Upgrade to Pro</a>
+      <a class="btn btn-primary" id="upgrade-top" href="/courses.html">Upgrade to Pro</a>
     </div>
 
     <div class="stats">
@@ -157,7 +158,7 @@ h2{font-size:18px;font-weight:800;letter-spacing:-.01em}
           <div class="row"><span>Plan</span><b id="pc-plan">Free</b></div>
           <div class="row"><span>AI hints</span><b id="pc-hints">5 a day</b></div>
           <div class="row"><span id="pc-exp-k">Resets</span><b id="pc-exp">Daily</b></div>
-          <a class="btn btn-primary" id="upgrade" href="/#pricing">Upgrade to Pro</a>
+          <a class="btn btn-primary" id="upgrade" href="/courses.html">Upgrade to Pro</a>
         </div>
       </div>
     </div>
