@@ -34,7 +34,7 @@
     <div>
       <div class="field"><label for="hours">Time per study day</label><select id="hours"><option value="1">About 1 hour</option><option value="2" selected>About 2 hours</option><option value="3">About 3 hours</option><option value="4">4+ hours</option></select></div>
       <div class="field"><label>Where are you starting?</label><div class="opts" id="level"></div></div>
-      <div class="field"><label>Target company</label><div class="opts" id="target"></div><small>Company lists are built from public interview reports, so treat them as likely topics, not a guarantee.</small></div>
+      <div class="field"><label>Target company</label><div class="opts" id="target"></div><small id="co-lock" style="display:none">Company-wise plans are part of the paid <a href="/courses.html" style="color:var(--purple-d);font-weight:700">Company-wise Prep Tracks</a>, coming soon. For now, build a general plan with your interview date.</small></div>
     </div>
   </div>
   <button class="btn btn-primary" id="make" type="button">Build my plan →</button>
@@ -51,13 +51,13 @@ const LS = ASProgress.LS, DAY = ASProgress.DAY;
 const loadProbs = () => fetch("/practice/problems.json").then((r) => r.json());
 
 const LEVELS = { new: "New to coding", basics: "I know the basics", dsa: "I've done some DSA" };
-const TARGETS = { any: "No specific company", amazon: "Amazon", google: "Google", microsoft: "Microsoft", meta: "Meta", flipkart: "Flipkart", tcs: "TCS", infosys: "Infosys" };
+const TARGETS = { any: "No specific company", amazon: "Amazon 🔒", google: "Google 🔒", microsoft: "Microsoft 🔒", meta: "Meta 🔒", flipkart: "Flipkart 🔒", tcs: "TCS 🔒", infosys: "Infosys 🔒" };
 let level = "basics", target = "any", CO = {};
-fetch("/practice/companies.json").then((r) => r.json()).then((c) => (CO = c)).catch(() => {});
+
 const sel = $("#weeks"); [[3, "3 days"], [5, "5 days"], [7, "1 week"], [10, "10 days"], [14, "2 weeks"], [21, "3 weeks"], [28, "4 weeks"], [42, "6 weeks"], [56, "8 weeks"], [84, "12 weeks"], [112, "16 weeks"], [168, "24 weeks"]].forEach(([d, n]) => sel.insertAdjacentHTML("beforeend", `<option value="${d}" ${d === 56 ? "selected" : ""}>${n}</option>`));
 function opts(id, map, get, set) { $(id).innerHTML = Object.entries(map).map(([k, n]) => `<button type="button" class="opt ${k === get() ? "on" : ""}" data-k="${k}">${n}</button>`).join(""); $(id).querySelectorAll(".opt").forEach((b) => b.onclick = () => { set(b.dataset.k); opts(id, map, get, set); }); }
 opts("#level", LEVELS, () => level, (v) => (level = v));
-opts("#target", TARGETS, () => target, (v) => (target = v));
+opts("#target", TARGETS, () => target, (v) => { if (v !== "any") { $("#co-lock").style.display = ""; return; } target = v; });
 const untilDate = () => { const v = $("#date").value; if (!v) return 0; const [y, m, d] = v.split("-").map(Number); const t0 = new Date(); t0.setHours(0, 0, 0, 0); return Math.round((new Date(y, m - 1, d) - t0) / DAY); };
 $("#date").onchange = () => { const n = untilDate(); if (n <= 0) return; let best = +sel.options[0].value; [...sel.options].forEach((o) => { if (Math.abs(+o.value - n) < Math.abs(best - n)) best = +o.value; }); sel.value = best; };
 let P = [];
