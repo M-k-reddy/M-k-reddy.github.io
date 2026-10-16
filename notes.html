@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI &amp; ML Notes · AlgoSolveo</title>
+<meta name="description" content="Handwritten-style AI and Machine Learning notes for B.Tech students and interviews, as PDFs." />
+<link rel="canonical" href="https://algosolveo.me/notes.html" />
+<meta property="og:title" content="AI &amp; ML Notes · AlgoSolveo" />
+<meta property="og:description" content="AI and Machine Learning notes as PDFs." />
+<meta property="og:url" content="https://algosolveo.me/notes.html" />
+<meta property="og:image" content="https://algosolveo.me/og-image.png" />
+<link rel="icon" type="image/png" href="algosolveo-icon128.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="/practice/tools.css" />
+<link rel="stylesheet" href="/theme.css?v=3" />
+</head>
+<body>
+<div class="asn" role="banner"><div class="asn-in"><a class="asn-brand" href="/" aria-label="AlgoSolveo home"><img src="/algosolveo-icon128.png" alt="" width="32" height="32" />AlgoSolveo</a><nav class="asn-pill" aria-label="Main"><a href="/">Home</a><a href="/roadmap.html">Roadmap</a><a href="/courses.html">Courses</a><div class="asn-more on"><button type="button" aria-expanded="false" aria-haspopup="true">More <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="asn-drop"><a href="/pattern-quiz.html">Pattern quiz<small>Guess the pattern, title hidden</small></a><a href="/mock.html">Mock tests<small>Timed interview rounds</small></a><a href="/revise.html">Revision<small>Problems come back before you forget</small></a><a href="/notes.html" class="on">Study planner<small>A day-by-day plan to your date</small></a></div></div></nav><div class="asn-r"><a class="asn-signin" data-auto href="/account.html">Sign in</a></div><button class="asn-burger" type="button" aria-label="Open menu" aria-expanded="false"><span></span></button></div><div class="asn-mob"><a href="/">Home</a><a href="/roadmap.html">Roadmap</a><a href="/courses.html">Courses</a><a href="/pattern-quiz.html">Pattern quiz</a><a href="/mock.html">Mock tests</a><a href="/revise.html">Revision</a><a href="/notes.html" class="on">Study planner</a></div></div>
+<main>
+<h1>AI &amp; ML Notes</h1>
+<p class="lead">Clear, exam- and interview-ready notes on Artificial Intelligence and Machine Learning, as PDFs you can read on any device.</p>
+<div id="status" class="card">Checking your access…</div>
+<div id="list"></div>
+</main>
+<style>
+.nsec{margin:28px 0 10px;font-family:Fraunces,serif;font-size:1.4rem}
+.ngrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.ncard{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ncard b{font-weight:600}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(async () => {
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const sb = supabase.createClient("https://qxlmqxslpwqbrisywzsp.supabase.co", "sb_publishable_xnrdX1gkErcDhVHZf2l7yA_dFMQSa5k", { auth: { persistSession: true, detectSessionInUrl: false } });
+const SECTIONS = { ai: "Artificial Intelligence", ml: "Machine Learning" };
+const nice = (f) => f.replace(/\.pdf$/i, "").replace(/[-_]+/g, " ").replace(/^\d+\s*/, "");
+const { data: { session } } = await sb.auth.getSession();
+if (!session) { $("#status").innerHTML = 'Sign in to open your notes. <a class="btn btn-primary" href="/account.html" style="margin-left:10px">Sign in</a>'; return; }
+let html = "", total = 0;
+for (const [dir, title] of Object.entries(SECTIONS)) {
+  const { data, error } = await sb.storage.from("notes").list(dir, { limit: 200, sortBy: { column: "name", order: "asc" } });
+  const files = (data || []).filter((f) => /\.pdf$/i.test(f.name));
+  if (!files.length) continue;
+  total += files.length;
+  html += `<h2 class="nsec">${title}</h2><div class="ngrid">` + files.map((f) => `<div class="card ncard"><b>${esc(nice(f.name))}</b><button class="btn btn-primary" data-p="${esc(dir + "/" + f.name)}">Open</button></div>`).join("") + "</div>";
+}
+if (!total) { $("#status").innerHTML = 'These notes are part of a paid course. <a href="/courses.html">See courses</a>'; return; }
+$("#status").style.display = "none";
+$("#list").innerHTML = html;
+$("#list").addEventListener("click", async (e) => {
+  const p = e.target.dataset && e.target.dataset.p; if (!p) return;
+  const w = window.open("", "_blank");
+  const { data, error } = await sb.storage.from("notes").createSignedUrl(p, 600);
+  if (error || !data) { if (w) w.close(); alert("Couldn't open this file. Please try again."); return; }
+  if (w) w.location = data.signedUrl; else location.href = data.signedUrl;
+});
+})();
+</script>
+<script src="/nav.js?v=3"></script>
+</body>
+</html>
