@@ -121,7 +121,7 @@ footer{border-top:1px solid var(--border);padding:26px 0;font-size:14px;color:va
 <div class="cc-f"><b class="pr ">Launching soon</b><button class="btn btn-l" onclick="openWl('full-stack-project','Full-Stack Project Course')">Notify me</button></div></article></div>
 <div class="empty" id="empty" hidden>No courses match. <button type="button" onclick="clearF()">Clear filters</button></div>
 </div></div>
-<section class="wide subj"><h2>Explore by subject</h2><p class="lead2">Pick a subject. Live ones open now; the rest are being written.</p><div class="sgrid"><a class="sj" href="/roadmap.html"><span>🧠</span><b>Data Structures &amp; Algorithms</b><i class="ok">Open</i></a><a class="sj" href="/courses/dsa-patterns.html"><span>☕</span><b>Java</b><i class="ok">Open</i></a><a class="sj" href="/notes.html"><span>🤖</span><b>Artificial Intelligence</b><i class="ok">Open</i></a><a class="sj" href="/notes.html"><span>📈</span><b>Machine Learning</b><i class="ok">Open</i></a><div class="sj off"><span>🗃️</span><b>DBMS</b><i>Soon</i></div><div class="sj off"><span>⚙️</span><b>Operating Systems</b><i>Soon</i></div><div class="sj off"><span>🌐</span><b>Computer Networks</b><i>Soon</i></div><div class="sj off"><span>🧱</span><b>OOPs</b><i>Soon</i></div><div class="sj off"><span>🗄️</span><b>SQL</b><i>Soon</i></div><div class="sj off"><span>🔌</span><b>Computer Organization</b><i>Soon</i></div><div class="sj off"><span>📐</span><b>Design &amp; Analysis of Algorithms</b><i>Soon</i></div><div class="sj off"><span>🛠️</span><b>Software Engineering</b><i>Soon</i></div><div class="sj off"><span>🐍</span><b>Python</b><i>Soon</i></div><div class="sj off"><span>➗</span><b>Discrete Mathematics</b><i>Soon</i></div><div class="sj off"><span>🔤</span><b>Automata Theory (FLAT)</b><i>Soon</i></div><div class="sj off"><span>🧾</span><b>Compiler Design</b><i>Soon</i></div></div></section>
+<section class="wide subj"><h2>Notes by subject</h2><p class="lead2">Subject notes as PDFs. AI and ML are ready; the rest are being written.</p><div class="sgrid"><a class="sj" href="/notes.html"><span>🤖</span><b>Artificial Intelligence</b><i class="ok">Notes</i></a><a class="sj" href="/notes.html"><span>📈</span><b>Machine Learning</b><i class="ok">Notes</i></a><div class="sj off"><span>🧠</span><b>Data Structures &amp; Algorithms</b><i>Soon</i></div><div class="sj off"><span>☕</span><b>Java</b><i>Soon</i></div><div class="sj off"><span>🗃️</span><b>DBMS</b><i>Soon</i></div><div class="sj off"><span>⚙️</span><b>Operating Systems</b><i>Soon</i></div><div class="sj off"><span>🌐</span><b>Computer Networks</b><i>Soon</i></div><div class="sj off"><span>🧱</span><b>OOPs</b><i>Soon</i></div><div class="sj off"><span>🗄️</span><b>SQL</b><i>Soon</i></div><div class="sj off"><span>🔌</span><b>Computer Organization</b><i>Soon</i></div><div class="sj off"><span>📐</span><b>Design &amp; Analysis of Algorithms</b><i>Soon</i></div><div class="sj off"><span>🛠️</span><b>Software Engineering</b><i>Soon</i></div><div class="sj off"><span>🐍</span><b>Python</b><i>Soon</i></div><div class="sj off"><span>➗</span><b>Discrete Mathematics</b><i>Soon</i></div><div class="sj off"><span>🔤</span><b>Automata Theory (FLAT)</b><i>Soon</i></div><div class="sj off"><span>🧾</span><b>Compiler Design</b><i>Soon</i></div></div></section>
 <div class="wide"><div class="cta"><h2>Want a course we haven't listed?</h2><p>Tell us what you're preparing for and we'll prioritise it.</p>
 <a class="btn btn-p" href="mailto:manikethanreddychalla20@gmail.com?subject=Course%20request">Request a course</a></div></div>
 </main>
@@ -143,6 +143,21 @@ async function joinWaitlist(form,course){
 }
 </script>
 <script>let wlCourse="";const wl=document.getElementById("wl");function openWl(id,name){wlCourse=id;document.getElementById("wl-t").textContent=name;wl.querySelector(".wl-msg").textContent="";wl.showModal()}</script>
+<script>let wlCourse="";const wl=document.getElementById("wl");function openWl(id,name){wlCourse=id;document.getElementById("wl-t").textContent=name;wl.querySelector(".wl-msg").textContent="";wl.showModal()}
+let cat=new URLSearchParams(location.search).get("cat")||"all";
+const cards=[...document.querySelectorAll(".cc")],q=document.getElementById("q");
+function vals(n){return [...document.querySelectorAll('input[name='+n+']:checked')].map(i=>i.value)}
+function apply(){
+  const st=vals("st"),pr=vals("pr"),lv=vals("lv"),t=q.value.trim().toLowerCase();let n=0;
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.c===cat));
+  cards.forEach(c=>{const d=c.dataset,ok=(cat==="all"||d.cat===cat)&&(!st.length||st.includes(d.st))&&(!pr.length||pr.includes(d.pr))&&(!lv.length||lv.some(l=>d.lv.split(" ").includes(l)))&&(!t||t.split(/\s+/).every(w=>d.q.includes(w)));c.hidden=!ok;if(ok)n++});
+  document.getElementById("cnt").textContent=n+(n===1?" course":" courses")+(cat==="all"?"":" in "+document.querySelector('.tabs button[data-c="'+cat+'"]').firstChild.textContent);
+  document.getElementById("empty").hidden=n>0;
+}
+function clearF(){document.querySelectorAll(".fbox input").forEach(i=>i.checked=false);q.value="";cat="all";history.replaceState(null,"",location.pathname);apply()}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{cat=b.dataset.c;history.replaceState(null,"",cat==="all"?location.pathname:"?cat="+cat);apply()});
+document.querySelectorAll(".fbox input").forEach(i=>i.onchange=apply);q.oninput=apply;apply();
+</script>
 <script>let wlCourse="";const wl=document.getElementById("wl");function openWl(id,name){wlCourse=id;document.getElementById("wl-t").textContent=name;wl.querySelector(".wl-msg").textContent="";wl.showModal()}
 let cat=new URLSearchParams(location.search).get("cat")||"all";
 const cards=[...document.querySelectorAll(".cc")],q=document.getElementById("q");
