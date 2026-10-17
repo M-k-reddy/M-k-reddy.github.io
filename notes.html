@@ -22,7 +22,7 @@
 <main>
 <h1>Notes Vault</h1>
 <p class="lead">Clear, exam- and interview-ready B.Tech subject notes as PDFs you can read on any device. Artificial Intelligence and Machine Learning are in now, with more subjects on the way.</p>
-<div id="status" class="card">Checking your access…</div>
+<div id="status" class="card">Loading notes…</div>
 <div id="list"></div>
 </main>
 <style>
@@ -43,51 +43,128 @@
 .nb b{font-weight:700;font-size:15.5px;line-height:1.3}.nm{display:flex;gap:6px;flex-wrap:wrap}
 .nm span{font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;background:#F6EFE3;border:1px solid #E8DDCB;color:#5E574C}
 .nb .btn{margin-top:auto;justify-content:center}
+.th-img{padding:0;background:#fff;border-bottom:1px solid #E8DDCB}.th-img::before,.th-img::after{display:none}
+.th-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
+.th-img .th-top{position:absolute;top:12px;left:14px;right:14px}
+.lk{position:absolute;right:12px;bottom:12px;z-index:1;background:rgba(28,26,23,.82);color:#fff;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:15px}
+.th-img::after{display:block;content:"";position:absolute;left:0;right:0;bottom:0;top:auto;width:auto;height:45%;border-radius:0;background:linear-gradient(transparent,rgba(255,255,255,.9))}
+.nf{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto}.nf span{display:flex;gap:6px}.np{font-size:20px;font-weight:800}
+.btn-ghost{background:#fff;border:1px solid #E8DDCB;color:#1C1A17}
+.nbar{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;background:#FCEBDD;border:1px solid #F3CDB4;border-radius:14px;padding:12px 16px;margin-top:18px;font-weight:600;font-size:14.5px}.nbar a{color:#9A3D1E;font-weight:800}
+.dlg{border:0;border-radius:20px;padding:22px;max-width:460px;width:92%;margin:auto;background:#FFFDF8}.dlg::backdrop{background:rgba(28,26,23,.6)}
+.dlg h3{font-family:Fraunces,serif;font-size:22px;margin:0 30px 12px 0}.dlg .x{float:right;background:none;border:0;font-size:24px;color:#857C6E;cursor:pointer}
+.pv-wrap{position:relative;max-height:62vh;overflow:hidden;border:1px solid #E8DDCB;border-radius:12px}.pv-wrap img{width:100%;display:block}
+.pv-fade{position:absolute;left:0;right:0;bottom:0;padding:60px 12px 14px;text-align:center;font-weight:700;background:linear-gradient(transparent,#FFFDF8 70%)}
+.bp{font-size:15px;color:#5E574C}.bp b{font-size:24px;color:#1C1A17}.bs{margin:10px 0;color:#5E574C;font-size:14.5px}
+.bf{display:flex;gap:8px;flex-wrap:wrap}.bf input{flex:1;min-width:200px;padding:11px 13px;border-radius:12px;border:1px solid #E8DDCB;font:inherit}.bm{margin-top:8px;font-size:14px;color:#9A3D1E;min-height:20px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (async () => {
 const $ = (s) => document.querySelector(s);
-const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const sb = supabase.createClient("https://qxlmqxslpwqbrisywzsp.supabase.co", "sb_publishable_xnrdX1gkErcDhVHZf2l7yA_dFMQSa5k", { auth: { persistSession: true, detectSessionInUrl: false } });
-const SECTIONS = { ai: "Artificial Intelligence", ml: "Machine Learning" };
-const nice = (f) => f.replace(/\.pdf$/i, "").replace(/[-_]+/g, " ").replace(/^\d+\s*/, "");
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const SB = "https://qxlmqxslpwqbrisywzsp.supabase.co", KEY = "sb_publishable_xnrdX1gkErcDhVHZf2l7yA_dFMQSa5k";
+const sb = supabase.createClient(SB, KEY, { auth: { persistSession: true, detectSessionInUrl: false } });
+const SUBJ = { ai: ["Artificial Intelligence", "AI", "🤖"], ml: ["Machine Learning", "ML", "📈"], other: ["More notes", "NOTES", "📄"] };
+const nice = (f) => f.replace(/^.*\//, "").replace(/\.pdf$/i, "").replace(/[-_]+/g, " ").replace(/^\d+\s*/, "").trim();
+const subjOf = (path) => { const m = path.match(/^(ai|ml)\//i) || path.match(/^(ai|ml)[\s_-]/i); return m ? m[1].toLowerCase() : "other"; };
+const st = $("#status");
+
 const { data: { session } } = await sb.auth.getSession();
-if (!session) { $("#status").innerHTML = 'Sign in to open your notes. <a class="btn btn-primary" href="/account.html" style="margin-left:10px">Sign in</a>'; return; }
-let html = "", total = 0;
-const groups = { ai: [], ml: [], other: [] };
-for (const dir of ["", "ai", "ml"]) {
-  const { data } = await sb.storage.from("notes").list(dir, { limit: 200, sortBy: { column: "name", order: "asc" } });
-  for (const f of (data || [])) {
-    if (!/\.pdf$/i.test(f.name)) continue;
-    const key = dir || (/^ai[\s_-]/i.test(f.name) ? "ai" : /^ml[\s_-]/i.test(f.name) ? "ml" : "other");
-    groups[key].push({ name: f.name, size: f.metadata && f.metadata.size, path: dir ? dir + "/" + f.name : f.name });
+let admin = false, paid = false;
+if (session) {
+  const { data: p } = await sb.from("profiles").select("*").eq("id", session.user.id).maybeSingle();
+  admin = !!(p && p.is_admin);
+  paid = !!(p && ["pro", "pass"].includes(p.plan) && (!p.plan_expires_at || new Date(p.plan_expires_at) > new Date()));
+}
+const unlocked = admin || paid;
+
+async function loadCatalog() { const { data } = await sb.from("notes_catalog").select("*").order("subject").order("sort").order("title"); return data || []; }
+let cat = await loadCatalog();
+
+if (admin) {
+  st.textContent = "Admin: checking for new PDFs…";
+  const files = [];
+  for (const dir of ["", "ai", "ml"]) {
+    const { data } = await sb.storage.from("notes").list(dir, { limit: 200 });
+    for (const f of data || []) if (/\.pdf$/i.test(f.name)) files.push(dir ? dir + "/" + f.name : f.name);
+  }
+  const have = new Map(cat.map((c) => [c.path, c]));
+  const todo = files.filter((p) => !have.has(p) || !have.get(p).preview_url);
+  if (todo.length) {
+    await loadPdfJs();
+    for (const [i, path] of todo.entries()) {
+      st.textContent = `Admin: making preview ${i + 1} of ${todo.length}…`;
+      const row = have.get(path) || { path, subject: subjOf(path), title: nice(path).replace(/^(ai|ml)\s+/i, "") || nice(path), price: 99 };
+      try {
+        const { data: s } = await sb.storage.from("notes").createSignedUrl(path, 600);
+        const pdf = await pdfjsLib.getDocument(s.signedUrl).promise;
+        const pg = await pdf.getPage(1), v0 = pg.getViewport({ scale: 1 }), v = pg.getViewport({ scale: 700 / v0.width });
+        const c = document.createElement("canvas"); c.width = v.width; c.height = v.height;
+        await pg.render({ canvasContext: c.getContext("2d"), viewport: v }).promise;
+        const blob = await new Promise((r) => c.toBlob(r, "image/jpeg", 0.82));
+        const key = path.replace(/[^a-z0-9]+/gi, "-").toLowerCase() + ".jpg";
+        await sb.storage.from("note-previews").upload(key, blob, { upsert: true, contentType: "image/jpeg" });
+        row.preview_url = sb.storage.from("note-previews").getPublicUrl(key).data.publicUrl + "?v=" + Date.now();
+        row.pages = pdf.numPages;
+      } catch (e) { console.warn("preview failed", path, e); }
+      const { error } = await sb.from("notes_catalog").upsert(row);
+      if (error) { st.textContent = "Admin: couldn't save the catalog. Run notes_catalog.sql in Supabase first."; console.warn(error); return; }
+    }
+    cat = await loadCatalog();
   }
 }
-const TITLES = { ...SECTIONS, other: "More notes" };
-for (const [key, files] of Object.entries(groups)) {
-  if (!files.length) continue;
-  total += files.length;
-  const M = { ai: ["AI", "🤖"], ml: ["ML", "📈"], other: ["NOTES", "📄"] }[key];
-  html += `<h2 class="nsec">${TITLES[key]}</h2><div class="ngrid">` + files.map((f) => {
-    const t = nice(f.name).replace(/^(ai|ml)\s+/i, "").trim() || nice(f.name);
-    const mb = f.size ? (f.size / 1048576).toFixed(1) + " MB" : "";
-    const tags = [/handwritten/i.test(f.name) ? "Handwritten" : "Typed notes", "PDF", mb].filter(Boolean);
-    return `<div class="nc" data-p="${esc(f.path)}"><div class="th t-${key}"><div class="th-top"><span class="th-code">${M[0]}</span><span class="th-pdf">PDF</span></div><div class="th-t">${esc(TITLES[key])}</div><span class="th-ic">${M[1]}</span></div><div class="nb"><b>${esc(t)}</b><div class="nm">${tags.map((x) => `<span>${esc(x)}</span>`).join("")}</div><button class="btn btn-primary" data-p="${esc(f.path)}">Open notes</button></div></div>`;
+
+if (!cat.length) { st.innerHTML = "New notes are being added. Check back soon."; return; }
+st.style.display = "none";
+const groups = {};
+for (const n of cat) (groups[n.subject in SUBJ ? n.subject : "other"] ||= []).push(n);
+let html = "";
+if (!unlocked) html += `<div class="nbar"><span>🔒 Preview the first page of every note. Unlock to read the full PDF.</span>${session ? "" : '<a href="/account.html">Already bought? Sign in</a>'}</div>`;
+for (const k of ["ai", "ml", "other"]) {
+  const list = groups[k]; if (!list) continue;
+  const [title, code, ic] = SUBJ[k];
+  html += `<h2 class="nsec">${title}</h2><div class="ngrid">` + list.map((n) => {
+    const thumb = n.preview_url
+      ? `<div class="th th-img"><img src="${esc(n.preview_url)}" alt="First page of ${esc(n.title)}" loading="lazy" /><div class="th-top"><span class="th-code">${code}</span><span class="th-pdf">PDF</span></div>${unlocked ? "" : '<span class="lk">🔒</span>'}</div>`
+      : `<div class="th t-${k}"><div class="th-top"><span class="th-code">${code}</span><span class="th-pdf">PDF</span></div><div class="th-t">${title}</div><span class="th-ic">${ic}</span></div>`;
+    const tags = [/handwritten/i.test(n.path) ? "Handwritten" : "Notes", n.pages ? n.pages + " pages" : ""].filter(Boolean);
+    const foot = unlocked
+      ? `<button class="btn btn-primary" data-open="${esc(n.path)}">Open notes</button>`
+      : `<div class="nf"><b class="np">₹${n.price}</b><span><button class="btn btn-ghost" data-prev="${esc(n.path)}">Preview</button><button class="btn btn-primary" data-buy="${esc(n.path)}">Unlock</button></span></div>`;
+    return `<div class="nc"><div data-prev="${esc(n.path)}" data-open="${unlocked ? esc(n.path) : ""}">${thumb}</div><div class="nb"><b>${esc(n.title)}</b><div class="nm">${tags.map((x) => `<span>${esc(x)}</span>`).join("")}</div>${foot}</div></div>`;
   }).join("") + "</div>";
 }
-if (!total) { $("#status").innerHTML = 'These notes are part of a paid course. <a href="/courses.html">See courses</a>'; return; }
-$("#status").style.display = "none";
 $("#list").innerHTML = html;
+const byPath = Object.fromEntries(cat.map((n) => [n.path, n]));
+
 $("#list").addEventListener("click", async (e) => {
-  const el = e.target.closest("[data-p]"); const p = el && el.dataset.p; if (!p) return;
-  const w = window.open("", "_blank");
-  const { data, error } = await sb.storage.from("notes").createSignedUrl(p, 600);
-  if (error || !data) { if (w) w.close(); alert("Couldn't open this file. Please try again."); return; }
-  if (w) w.location = data.signedUrl; else location.href = data.signedUrl;
+  const o = e.target.closest("[data-open]"), pv = e.target.closest("[data-prev]"), by = e.target.closest("[data-buy]");
+  if (o && o.dataset.open) {
+    const w = window.open("", "_blank");
+    const { data } = await sb.storage.from("notes").createSignedUrl(o.dataset.open, 600);
+    if (!data) { if (w) w.close(); alert("Couldn't open this file. Please try again."); return; }
+    if (w) w.location = data.signedUrl; else location.href = data.signedUrl;
+  } else if (by) openBuy(byPath[by.dataset.buy]);
+  else if (pv && byPath[pv.dataset.prev] && byPath[pv.dataset.prev].preview_url) {
+    const n = byPath[pv.dataset.prev];
+    $("#pv-img").src = n.preview_url; $("#pv-t").textContent = n.title; $("#pv-buy").onclick = () => { pvd.close(); openBuy(n); }; pvd.showModal();
+  }
 });
+const pvd = $("#pv"), bd = $("#buy");
+function openBuy(n) { $("#buy-t").textContent = "Unlock " + n.title; $("#buy-p").textContent = "₹" + n.price; bd.dataset.course = ("notes:" + n.path).slice(0, 60); $("#buy-msg").textContent = ""; bd.showModal(); }
+$("#buy-f").onsubmit = async (e) => {
+  e.preventDefault(); const email = e.target.email.value.trim(), m = $("#buy-msg");
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { m.textContent = "Please enter a valid email."; return; }
+  m.textContent = "Saving…";
+  try { const r = await fetch(SB + "/rest/v1/waitlist", { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + KEY, "Content-Type": "application/json", Prefer: "return=minimal" }, body: JSON.stringify({ email, course: bd.dataset.course }) });
+    m.textContent = r.ok || r.status === 409 ? "Done. We'll email you the moment payments open." : "Something went wrong. Please try again."; } catch { m.textContent = "Network error. Please try again."; }
+};
+function loadPdfJs() { return new Promise((res, rej) => { if (window.pdfjsLib) return res(); const s = document.createElement("script"); s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"; s.onload = () => { pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"; res(); }; s.onerror = rej; document.head.appendChild(s); }); }
 })();
 </script>
+<dialog id="pv" class="dlg"><button class="x" onclick="this.closest('dialog').close()">×</button><h3 id="pv-t"></h3><div class="pv-wrap"><img id="pv-img" alt="First page preview" /><div class="pv-fade">🔒 The rest unlocks after purchase</div></div><button class="btn btn-primary" id="pv-buy" style="width:100%;justify-content:center;margin-top:12px">Unlock full notes</button></dialog>
+<dialog id="buy" class="dlg"><button class="x" onclick="this.closest('dialog').close()">×</button><h3 id="buy-t">Unlock</h3><p class="bp"><b id="buy-p"></b> · lifetime access · read on any device</p><p class="bs">Payments are opening in a few days. Leave your email and we'll send you the unlock link first.</p><form id="buy-f" class="bf"><input name="email" type="email" placeholder="you@college.edu" required /><button class="btn btn-primary" type="submit">Notify me</button></form><div id="buy-msg" class="bm"></div></dialog>
 <script src="/nav.js?v=3"></script>
 </body>
 </html>
