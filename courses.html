@@ -18,7 +18,7 @@ body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);line-
 h1{font-size:clamp(30px,4.6vw,44px);line-height:1.12;font-weight:600;letter-spacing:-.02em}
 .lead{font-size:17px;color:var(--ink2);margin-top:10px;max-width:640px}
 .srch{display:flex;align-items:center;gap:10px;max-width:560px;margin-top:22px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:0 16px;color:var(--muted);box-shadow:0 4px 18px rgba(28,26,23,.05)}
-.srch:focus-within{border-color:var(--purple)}.srch input{flex:1;border:0;outline:0;font:inherit;font-size:16px;padding:14px 0;background:none;color:var(--ink)}
+.srch:focus-within{border-color:var(--purple)}.srch input{flex:1;border:0;outline:0!important;box-shadow:none!important;-webkit-appearance:none;appearance:none;font:inherit;font-size:16px;padding:14px 0;background:none;color:var(--ink)}
 .hstats{display:flex;gap:30px;flex-wrap:wrap;margin-top:22px}.hstats b{display:block;font-size:22px;font-weight:800}.hstats span{font-size:13px;color:var(--muted)}
 .tabs{position:sticky;top:68px;z-index:4;background:rgba(251,247,240,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
 .tabs .wide{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}.tabs .wide::-webkit-scrollbar{display:none}
@@ -66,6 +66,8 @@ footer{border-top:1px solid var(--border);padding:26px 0;font-size:14px;color:va
 @media(max-width:800px){.lay{grid-template-columns:1fr;gap:14px}.side{position:static}.fbtn{display:inline-flex;background:#fff;border:1px solid var(--border);border-radius:999px;padding:8px 16px;font:inherit;font-weight:700;font-size:14px;cursor:pointer}
 .fbox{display:none;margin-top:10px}.side.open .fbox{display:block}.sgrid{grid-template-columns:1fr 1fr}}
 @media(max-width:800px){.tabs{top:62px}}@media(max-width:560px){.grid{grid-template-columns:1fr}.hstats{gap:20px}.tabs{top:62px}}
+.srch input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;width:16px;height:16px;cursor:pointer;background:no-repeat center/12px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23857C6E' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E")}
+.srch input:focus-visible{outline:0!important}
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": 1, "item": {"@type": "Course", "name": "DSA Patterns Bootcamp (Java)", "description": "Master the 53 patterns behind 325 LeetCode problems, stage by stage, with the AlgoSolveo tutor beside you.", "url": "https://algosolveo.me/courses/dsa-patterns.html", "provider": {"@type": "Organization", "name": "AlgoSolveo", "sameAs": "https://algosolveo.me"}}}, {"@type": "ListItem", "position": 2, "item": {"@type": "Course", "name": "Placement Aptitude & Reasoning", "description": "Quant, logical and verbal practice for TCS NQT, Infosys, Wipro, Accenture and Cognizant tests.", "url": "https://algosolveo.me/courses.html", "provider": {"@type": "Organization", "name": "AlgoSolveo", "sameAs": "https://algosolveo.me"}}}, {"@type": "ListItem", "position": 3, "item": {"@type": "Course", "name": "CS Fundamentals for Interviews", "description": "OOPs, DBMS, Operating Systems and Computer Networks, focused on the questions interviewers actually ask.", "url": "https://algosolveo.me/courses.html", "provider": {"@type": "Organization", "name": "AlgoSolveo", "sameAs": "https://algosolveo.me"}}}, {"@type": "ListItem", "position": 4, "item": {"@type": "Course", "name": "SQL for Interviews", "description": "Joins, group by, subqueries and window functions, plus the LeetCode SQL 50 explained.", "url": "https://algosolveo.me/courses.html", "provider": {"@type": "Organization", "name": "AlgoSolveo", "sameAs": "https://algosolveo.me"}}}, {"@type": "ListItem", "position": 5, "item": {"@type": "Course", "name": "Resume, LinkedIn & HR Round", "description": "An ATS-friendly resume, project write-ups that stand out, and answers for the HR round.", "url": "https://algosolveo.me/courses.html", "provider": {"@type": "Organization", "name": "AlgoSolveo", "sameAs": "https://algosolveo.me"}}}, {"@type": "ListItem", "position": 6, "item": {"@type": "Course", "name": "Company-wise Prep Tracks", "description": "Past questions from Amazon, Microsoft, TCS Digital and more, mapped to the patterns you've learned.", "url": "https://algosolveo.me/courses.html", "provider": {"@type": "Organization", "name": "AlgoSolveo", "sameAs": "https://algosolveo.me"}}}, {"@type": "ListItem", "position": 7, "item": {"@type": "Course", "name": "System Design Basics", "description": "Low-level design (parking lot, LRU cache) first, then the high-level design rounds.", "url": "https://algosolveo.me/courses.html", "provider": {"@type": "Organization", "name": "AlgoSolveo", "sameAs": "https://algosolveo.me"}}}, {"@type": "ListItem", "position": 8, "item": {"@type": "Course", "name": "Full-Stack Project Course", "description": "Build and deploy one resume-worthy project end to end, from idea to live URL.", "url": "https://algosolveo.me/courses.html", "provider": {"@type": "Organization", "name": "AlgoSolveo", "sameAs": "https://algosolveo.me"}}}, {"@type": "ListItem", "position": 9, "item": {"@type": "Course", "name": "Mock Interviews", "description": "Timed DSA and HR mocks with feedback, so the real interview feels familiar.", "url": "https://algosolveo.me/courses.html", "provider": {"@type": "Organization", "name": "AlgoSolveo", "sameAs": "https://algosolveo.me"}}}]}</script>
 <link rel="stylesheet" href="/theme.css?v=3" />
@@ -141,6 +143,21 @@ async function joinWaitlist(form,course){
 }
 </script>
 <script>let wlCourse="";const wl=document.getElementById("wl");function openWl(id,name){wlCourse=id;document.getElementById("wl-t").textContent=name;wl.querySelector(".wl-msg").textContent="";wl.showModal()}</script>
+<script>let wlCourse="";const wl=document.getElementById("wl");function openWl(id,name){wlCourse=id;document.getElementById("wl-t").textContent=name;wl.querySelector(".wl-msg").textContent="";wl.showModal()}
+let cat=new URLSearchParams(location.search).get("cat")||"all";
+const cards=[...document.querySelectorAll(".cc")],q=document.getElementById("q");
+function vals(n){return [...document.querySelectorAll('input[name='+n+']:checked')].map(i=>i.value)}
+function apply(){
+  const st=vals("st"),pr=vals("pr"),lv=vals("lv"),t=q.value.trim().toLowerCase();let n=0;
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.c===cat));
+  cards.forEach(c=>{const d=c.dataset,ok=(cat==="all"||d.cat===cat)&&(!st.length||st.includes(d.st))&&(!pr.length||pr.includes(d.pr))&&(!lv.length||lv.some(l=>d.lv.split(" ").includes(l)))&&(!t||t.split(/\s+/).every(w=>d.q.includes(w)));c.hidden=!ok;if(ok)n++});
+  document.getElementById("cnt").textContent=n+(n===1?" course":" courses")+(cat==="all"?"":" in "+document.querySelector('.tabs button[data-c="'+cat+'"]').firstChild.textContent);
+  document.getElementById("empty").hidden=n>0;
+}
+function clearF(){document.querySelectorAll(".fbox input").forEach(i=>i.checked=false);q.value="";cat="all";history.replaceState(null,"",location.pathname);apply()}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{cat=b.dataset.c;history.replaceState(null,"",cat==="all"?location.pathname:"?cat="+cat);apply()});
+document.querySelectorAll(".fbox input").forEach(i=>i.onchange=apply);q.oninput=apply;apply();
+</script>
 <script>let wlCourse="";const wl=document.getElementById("wl");function openWl(id,name){wlCourse=id;document.getElementById("wl-t").textContent=name;wl.querySelector(".wl-msg").textContent="";wl.showModal()}
 let cat=new URLSearchParams(location.search).get("cat")||"all";
 const cards=[...document.querySelectorAll(".cc")],q=document.getElementById("q");
