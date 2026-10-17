@@ -42,12 +42,20 @@ const nice = (f) => f.replace(/\.pdf$/i, "").replace(/[-_]+/g, " ").replace(/^\d
 const { data: { session } } = await sb.auth.getSession();
 if (!session) { $("#status").innerHTML = 'Sign in to open your notes. <a class="btn btn-primary" href="/account.html" style="margin-left:10px">Sign in</a>'; return; }
 let html = "", total = 0;
-for (const [dir, title] of Object.entries(SECTIONS)) {
-  const { data, error } = await sb.storage.from("notes").list(dir, { limit: 200, sortBy: { column: "name", order: "asc" } });
-  const files = (data || []).filter((f) => /\.pdf$/i.test(f.name));
+const groups = { ai: [], ml: [], other: [] };
+for (const dir of ["", "ai", "ml"]) {
+  const { data } = await sb.storage.from("notes").list(dir, { limit: 200, sortBy: { column: "name", order: "asc" } });
+  for (const f of (data || [])) {
+    if (!/\.pdf$/i.test(f.name)) continue;
+    const key = dir || (/^ai[\s_-]/i.test(f.name) ? "ai" : /^ml[\s_-]/i.test(f.name) ? "ml" : "other");
+    groups[key].push({ name: f.name, path: dir ? dir + "/" + f.name : f.name });
+  }
+}
+const TITLES = { ...SECTIONS, other: "More notes" };
+for (const [key, files] of Object.entries(groups)) {
   if (!files.length) continue;
   total += files.length;
-  html += `<h2 class="nsec">${title}</h2><div class="ngrid">` + files.map((f) => `<div class="card ncard"><b>${esc(nice(f.name))}</b><button class="btn btn-primary" data-p="${esc(dir + "/" + f.name)}">Open</button></div>`).join("") + "</div>";
+  html += `<h2 class="nsec">${TITLES[key]}</h2><div class="ngrid">` + files.map((f) => `<div class="card ncard"><b>${esc(nice(f.name))}</b><button class="btn btn-primary" data-p="${esc(f.path)}">Open</button></div>`).join("") + "</div>";
 }
 if (!total) { $("#status").innerHTML = 'These notes are part of a paid course. <a href="/courses.html">See courses</a>'; return; }
 $("#status").style.display = "none";
