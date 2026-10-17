@@ -91,9 +91,9 @@ footer{border-top:1px solid var(--border);padding:26px 0;font-size:14px;color:va
 <div class="grid" id="grid"><article class="cc" data-cat="dsa" data-st="live" data-pr="free" data-lv="beginner beginner intermediate advanced" data-q="dsa patterns bootcamp (java) learn the 53 patterns behind 312 interview problems, stage by stage, easiest first. java 312 problems">
 <div class="cc-top c-dsa"><span class="cc-ic">🧩</span><span class="cc-cat">DSA & Coding</span><span class="st live">Live</span></div>
 <div class="cc-b"><h3>DSA Patterns Bootcamp (Java)</h3><p>Learn the 53 patterns behind 312 interview problems, stage by stage, easiest first.</p><div class="cc-m"><span>📈 Beginner to Advanced</span><span>📘 10 modules · 53 lessons</span></div><div class="tags"><span>Java</span><span>312 problems</span></div></div>
-<div class="cc-f"><b class="pr free">Free</b><a class="btn btn-p" href="/courses/dsa-patterns.html">Start free →</a></div></article><article class="cc" data-cat="notes" data-st="live" data-pr="paid" data-lv="beginner beginner intermediate advanced" data-q="notes vault exam-ready b.tech subject notes as pdfs. ai and machine learning first, more every semester. ai ml jntuh">
+<div class="cc-f"><b class="pr free">Free</b><a class="btn btn-p" href="/courses/dsa-patterns.html">Start free →</a></div></article><article class="cc" data-cat="notes" data-st="live" data-pr="paid" data-lv="beginner beginner intermediate advanced" data-q="notes vault exam-ready b.tech subject notes as pdfs. ai and machine learning first, more every semester. ai ml">
 <div class="cc-top c-notes"><span class="cc-ic">📚</span><span class="cc-cat">B.Tech Notes</span><span class="st live">Live</span></div>
-<div class="cc-b"><h3>Notes Vault</h3><p>Exam-ready B.Tech subject notes as PDFs. AI and Machine Learning first, more every semester.</p><div class="cc-m"><span>📈 All years</span><span>📘 PDF notes</span></div><div class="tags"><span>AI</span><span>ML</span><span>JNTUH</span></div></div>
+<div class="cc-b"><h3>Notes Vault</h3><p>Exam-ready B.Tech subject notes as PDFs. AI and Machine Learning first, more every semester.</p><div class="cc-m"><span>📈 All years</span><span>📘 PDF notes</span></div><div class="tags"><span>AI</span><span>ML</span></div></div>
 <div class="cc-f"><b class="pr ">Paid</b><a class="btn btn-p" href="/notes.html">Open →</a></div></article><article class="cc" data-cat="cs" data-st="soon" data-pr="paid" data-lv="beginner" data-q="cs fundamentals for interviews oops, dbms, operating systems and computer networks, focused on what interviewers ask. oops dbms os cn">
 <div class="cc-top c-cs"><span class="cc-ic">🖥️</span><span class="cc-cat">CS Subjects</span><span class="st soon">Coming soon</span></div>
 <div class="cc-b"><h3>CS Fundamentals for Interviews</h3><p>OOPs, DBMS, Operating Systems and Computer Networks, focused on what interviewers ask.</p><div class="cc-m"><span>📈 Beginner</span><span>📘 4 subjects</span></div><div class="tags"><span>OOPs</span><span>DBMS</span><span>OS</span><span>CN</span></div></div>
@@ -143,6 +143,21 @@ async function joinWaitlist(form,course){
 }
 </script>
 <script>let wlCourse="";const wl=document.getElementById("wl");function openWl(id,name){wlCourse=id;document.getElementById("wl-t").textContent=name;wl.querySelector(".wl-msg").textContent="";wl.showModal()}</script>
+<script>let wlCourse="";const wl=document.getElementById("wl");function openWl(id,name){wlCourse=id;document.getElementById("wl-t").textContent=name;wl.querySelector(".wl-msg").textContent="";wl.showModal()}
+let cat=new URLSearchParams(location.search).get("cat")||"all";
+const cards=[...document.querySelectorAll(".cc")],q=document.getElementById("q");
+function vals(n){return [...document.querySelectorAll('input[name='+n+']:checked')].map(i=>i.value)}
+function apply(){
+  const st=vals("st"),pr=vals("pr"),lv=vals("lv"),t=q.value.trim().toLowerCase();let n=0;
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.c===cat));
+  cards.forEach(c=>{const d=c.dataset,ok=(cat==="all"||d.cat===cat)&&(!st.length||st.includes(d.st))&&(!pr.length||pr.includes(d.pr))&&(!lv.length||lv.some(l=>d.lv.split(" ").includes(l)))&&(!t||t.split(/\s+/).every(w=>d.q.includes(w)));c.hidden=!ok;if(ok)n++});
+  document.getElementById("cnt").textContent=n+(n===1?" course":" courses")+(cat==="all"?"":" in "+document.querySelector('.tabs button[data-c="'+cat+'"]').firstChild.textContent);
+  document.getElementById("empty").hidden=n>0;
+}
+function clearF(){document.querySelectorAll(".fbox input").forEach(i=>i.checked=false);q.value="";cat="all";history.replaceState(null,"",location.pathname);apply()}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{cat=b.dataset.c;history.replaceState(null,"",cat==="all"?location.pathname:"?cat="+cat);apply()});
+document.querySelectorAll(".fbox input").forEach(i=>i.onchange=apply);q.oninput=apply;apply();
+</script>
 <script>let wlCourse="";const wl=document.getElementById("wl");function openWl(id,name){wlCourse=id;document.getElementById("wl-t").textContent=name;wl.querySelector(".wl-msg").textContent="";wl.showModal()}
 let cat=new URLSearchParams(location.search).get("cat")||"all";
 const cards=[...document.querySelectorAll(".cc")],q=document.getElementById("q");
